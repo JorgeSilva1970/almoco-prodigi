@@ -1,31 +1,35 @@
 // Contador regressivo
+// Contador regressivo
 function iniciarContador() {
-  if (!window.DATA_EVENTO) return;
+  const alvoStr = window.DATA_EVENTO;
+  if (!alvoStr) return;
 
+  // Ajusta aqui o ID conforme o teu HTML: 'contador-texto' ou 'contador'
   const elemento = document.getElementById('contador-texto');
   if (!elemento) return;
 
-  const dataEvento = new Date(window.DATA_EVENTO);
+  const dataEvento = new Date(alvoStr);
 
   function atualizar() {
     const agora = new Date();
-    const diffMs = dataEvento - agora;
+    const diff = dataEvento - agora;
 
-    if (diffMs <= 0) {
-      elemento.textContent = 'O grande dia chegou!';
+    if (diff <= 0) {
+      elemento.textContent = 'É hoje! 🎉';
+      clearInterval(timer);
       return;
     }
 
-    const segundos = Math.floor(diffMs / 1000);
-    const dias = Math.floor(segundos / (3600 * 24));
-    const horas = Math.floor((segundos % (3600 * 24)) / 3600);
-    const minutos = Math.floor((segundos % 3600) / 60);
+    const totalSeg = Math.floor(diff / 1000);
+    const dias     = Math.floor(totalSeg / 86400);
+    const horas    = Math.floor((totalSeg % 86400) / 3600);
+    const minutos  = Math.floor((totalSeg % 3600) / 60);
 
     elemento.textContent = `${dias} dias, ${horas} horas e ${minutos} minutos`;
   }
 
-  atualizar();
-  setInterval(atualizar, 60000); // atualiza a cada minuto
+  atualizar();                       // atualiza logo ao carregar
+  const timer = setInterval(atualizar, 60000); // atualiza de minuto a minuto
 }
 
 // ---------- Distritos -> Concelhos (via API) ----------

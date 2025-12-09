@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Contactos – Encontro Turma PRODIGI 2025/2026</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+      <a href="/galeria">Galeria</a>
+      <a href="/contacto">Contactos</a>
+      <a href="/alojamento">Alojamento</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    {{!-- 1. SECÇÃO: ORGANIZADORES (DESTAQUE) --}}
+    <section class="secao-contacto">
+      <h2>Organizador(es)</h2>
+      <p>Para qualquer dúvida sobre o encontro, fala diretamente com um dos organizadores.</p>
+
+      <ul>
+        {{#each organizadores}}
+          <li style="margin-bottom: 10px;">
+            <strong>{{this.nome}}</strong><br>
+            Email:
+            <a href="mailto:{{this.email}}">
+              {{this.email}}
+            </a><br>
+            Telemóvel: {{this.telefone}}
+          </li>
+        {{/each}}
+      </ul>
+    </section>
+
+    {{!-- 2. SECÇÃO: CONTACTOS DOS INSCRITOS --}}
+    <section class="secao-contacto" style="margin-top: 30px;">
+      <h2>Contactos dos Inscritos</h2>
+      <p>
+        Lista dos participantes atualmente inscritos (não cancelados).  
+        Usa esta informação apenas para organização interna do encontro.
+      </p>
+
+      <table class="tabela-inscritos">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telemóvel</th>
+            <th>Distrito</th>
+            <th>Concelho</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each contactosInscritos}}
+            <tr>
+              <td>{{this.nome}}</td>
+              <td>{{this.email}}</td>
+              <td>{{this.telefone}}</td>
+              <td>{{this.distrito}}</td>
+              <td>{{this.concelho}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

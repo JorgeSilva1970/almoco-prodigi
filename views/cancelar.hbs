@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>{{titulo}}</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    {{#if erro}}
+      <p class="erro">{{erro}}</p>
+    {{/if}}
+
+    {{#if mensagem}}
+      <p class="ok">{{mensagem}}</p>
+    {{/if}}
+  </main>
+</body>
+</html>

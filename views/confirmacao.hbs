@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>{{titulo}}</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    {{#if erro}}
+      <p class="erro">{{erro}}</p>
+      <a href="/inscricao">Voltar ao formulário</a>
+    {{else}}
+      <p>Obrigado, <strong>{{nome}}</strong>! A tua inscrição foi registada com o email <strong>{{email}}</strong>.</p>
+      <p>Se precisares de anular mais tarde, usa este link:</p>
+      <p>
+        <a href="/anular/{{id}}">Anular a minha inscrição</a>
+      </p>
+      <p>(No futuro, este link pode ser enviado por e-mail automaticamente.)</p>
+    {{/if}}
+  </main>
+</body>
+</html>

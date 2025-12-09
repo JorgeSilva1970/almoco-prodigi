@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Sugestões de Alojamento</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/alojamento">Alojamento</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <p>Se vens de longe e precisas de ficar por Lisboa, aqui vão algumas sugestões perto do restaurante:</p>
+
+    <ul>
+      {{#each hoteis}}
+        <li>
+          <strong>{{this.nome}}</strong> – {{this.distancia}}
+          {{#if this.link}}
+            (<a href="{{this.link}}" target="_blank">ver</a>)
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  </main>
+</body>
+</html>

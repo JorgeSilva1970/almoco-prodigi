@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Painel de Administração</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/lista">Lista Pública</a>
+      <a href="/admin/logout">Logout</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <h2>Inscrições (todas)</h2>
+    <p>
+      <a href="/admin/export-csv" class="btn-secundario">
+        Download CSV para Excel
+      </a>
+    </p>
+    <table class="tabela-inscritos">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Distrito</th>
+          <th>Concelho</th>
+          <th>Menu</th>
+          <th>Cancelado?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each inscricoes}}
+          <tr>
+            <td>{{this.id}}</td>
+            <td>{{this.nome}}</td>
+            <td>{{this.email}}</td>
+            <td>{{this.telefone}}</td>
+            <td>{{this.distrito}}</td>
+            <td>{{this.concelho}}</td>
+            <td>{{this.menu}}</td>
+            <td>{{#if this.cancelado}}Sim{{else}}Não{{/if}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

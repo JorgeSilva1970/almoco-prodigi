@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script defer src="/js/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Inscrição</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <h2>Formulário de Inscrição</h2>
+
+    <form action="/inscricao" method="POST" class="form-inscricao">
+      <label>
+        Nome completo*:
+        <input type="text" name="nome" required>
+      </label>
+
+      <label>
+        Telemóvel*:
+        <input type="tel" name="telefone" required>
+      </label>
+
+      <label>
+        E-mail*:
+        <input type="email" name="email" required>
+      </label>
+
+      <label>
+        Distrito de origem*:
+        <select name="distrito" id="distrito" required>
+          <option value="">-- Seleciona o distrito --</option>
+          {{#each distritos}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      </label>
+
+      <label>
+        Concelho de origem*:
+        <select name="concelho" id="concelho" required>
+          <option value="">-- Primeiro escolhe o distrito --</option>
+        </select>
+      </label>
+
+      <label>
+        Opção de menu*:
+        <select name="menu" required>
+          <option value="">-- Escolhe uma opção --</option>
+          <option value="Carne">Carne</option>
+          <option value="Peixe">Peixe</option>
+          <option value="Vegetariano">Vegetariano</option>
+        </select>
+      </label>
+
+      <button type="submit" class="btn-principal">Submeter Inscrição</button>
+      <button type="reset" class="btn-secundario">Limpar campos</button>
+    </form>
+    <!-- NOVA SECÇÃO: ANULAR INSCRIÇÃO POR EMAIL -->
+    <section class="secao-anular">
+      <h3>Já te inscreveste e precisas de anular?</h3>
+      <p>Podes usar o link enviado por email ou, em alternativa, introduzir o teu email abaixo:</p>
+
+      <form action="/anular-por-email" method="POST" class="form-anular">
+        <label>
+          E-mail utilizado na inscrição*:
+          <input type="email" name="email" required>
+        </label>
+        <button type="submit" class="btn-secundario">Anular inscrição</button>
+      </form>
+    </section>
+    <section class="secao-contacto">
+      <h3>Dúvidas ou questões?</h3>
+      <p>Podes contactar o organizador da turma:</p>
+      <p><strong>Email:</strong> <a href="mailto:{{emailOrganizador}}">{{emailOrganizador}}</a></p>
+      <p><strong>Telemóvel:</strong> <a href="tel:{{telemovelOrganizador}}">{{telemovelOrganizador}}</a></p>
+      <p><em>Nota:</em> Após submeteres a inscrição, receberás um email de confirmação com o link para eventual anulação.</p>
+    </section>
+    </main>
+</body>
+</html>

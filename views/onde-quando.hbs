@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Onde & Quando</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <!-- Detalhes + imagem ao lado -->
+    <section class="evento-container">
+      <div class="evento-detalhes">
+        <h2>Detalhes do Evento</h2>
+        <p><strong>Data:</strong> Sábado, 10 de Janeiro de 2026</p>
+        <p><strong>Hora:</strong> 13h00</p>
+        <p><strong>Restaurante:</strong> Restaurante Severianos - Campelos</p>
+        <p>
+          <strong>Morada:</strong> Estr. Nacional 8 2 km 12, 2565-001 Campelos
+          <button onclick="navigator.clipboard.writeText('Estr. Nacional 8 2 km 12, 2565-001 Campelos')">
+            Copiar Morada
+          </button>
+        </p>
+        <p><strong>Telefone:</strong> 261 982 130</p>
+      </div>
+
+      <div class="evento-imagem">
+        <img src="/img/restaurante-severianos.jpg" alt="Restaurante Severianos">
+      </div>
+    </section>
+
+    <!-- Mapa -->
+    <section>
+      <h2>Mapa</h2>
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d12371.05413705469!2d-9.281068560623465!3d39.1800961231921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2spt!4v1765230156251!5m2!1sen!2spt"
+        width="600"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </section>
+
+    <!-- Estacionamento / transportes -->
+    <section>
+      <h2>Estacionamento & Transportes</h2>
+      <p>- Parque de estacionamento a 200m do restaurante.</p>
+      <p>- Metro: Linha X, estação Y.</p>
+      <p>- Autocarros: 701, 732, ... (exemplo)</p>
+    </section>
+  </main>
+</body>
+</html>

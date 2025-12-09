@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>{{titulo}}</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/galeria">Galeria</a>
+      <a href="/contacto">Contacto</a>
+      <a href="/alojamento">Alojamento</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <h2>Relembrar os velhos tempos na Prodigi</h2>
+    <div class="galeria">
+      {{#each fotos}}
+        <figure>
+          <img src="{{this.url}}" alt="{{this.legenda}}">
+          <figcaption>{{this.legenda}}</figcaption>
+        </figure>
+      {{/each}}
+    </div>
+  </main>
+</body>
+</html>

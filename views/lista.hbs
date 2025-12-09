@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Lista de Inscritos</h1>
+    <nav>
+      <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <h2>Já somos {{contador}} Prodigis!</h2>
+    <button onclick="window.print()" class="btn-secundario">
+      Imprimir / Guardar em PDF
+    </button>
+
+    {{#if inscritos.length}}
+      <table class="tabela-inscritos">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Menu</th>
+            <th>Distrito</th>
+            <th>Concelho</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each inscritos}}
+            <tr>
+              <td>{{this.nome}}</td>
+              <td>{{this.menu}}</td>
+              <td>{{this.distrito}}</td>
+              <td>{{this.concelho}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{else}}
+      <p>Ainda não há inscritos. Sê o primeiro!</p>
+    {{/if}}
+  </main>
+</body>
+</html>

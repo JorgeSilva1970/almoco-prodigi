@@ -135,7 +135,7 @@ app.get('/inscricao', (req, res) => {
     titulo: 'Inscrição',
     distritos,
     // usa primeiro o FROM_EMAIL (noreply@jorge-silva.com), se existir
-    emailOrganizador: process.env.FROM_EMAIL || process.env.ADMIN_EMAIL || 'organizador@exemplo.com',
+    emailOrganizador: process.env.FROM_EMAIL || process.env.ADMIN_EMAIL || 'jorge.28.silva.sam@gmail.com',
     telemovelOrganizador: '+351 917 039 719'
   });
 });

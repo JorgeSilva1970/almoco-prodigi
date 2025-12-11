@@ -7,12 +7,12 @@ import session from 'express-session';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,        // in-v3.mailjet.com
+  host: process.env.SMTP_HOST,         // smtp.mailersend.net
   port: Number(process.env.SMTP_PORT) || 587,
   secure: false, // Mailjet usa TLS STARTTLS em 587
   auth: {
-    user: process.env.SMTP_USER,      // API Key Mailjet
-    pass: process.env.SMTP_PASS       // Secret Key Mailjet
+    user: process.env.SMTP_USER,      // API Key mailersend
+    pass: process.env.SMTP_PASS       // Secret Key mailersend
   }
 });
 

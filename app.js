@@ -134,7 +134,8 @@ app.get('/inscricao', (req, res) => {
   res.render('inscricao', {
     titulo: 'Inscrição',
     distritos,
-    emailOrganizador: process.env.ADMIN_EMAIL || 'organizador@exemplo.com',
+    // usa primeiro o FROM_EMAIL (noreply@jorge-silva.com), se existir
+    emailOrganizador: process.env.FROM_EMAIL || process.env.ADMIN_EMAIL || 'organizador@exemplo.com',
     telemovelOrganizador: '+351 917 039 719'
   });
 });

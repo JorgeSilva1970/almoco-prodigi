@@ -11,10 +11,10 @@
     "express": "^4.22.1",
     "express-session": "^1.18.2",
     "hbs": "^4.2.0",
+    "mailersend": "^2.6.0",
     "nodemailer": "^7.0.11"
   },
   "description": "",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JorgeSilva1970/almoco-prodigi.git"

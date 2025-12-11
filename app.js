@@ -135,8 +135,8 @@ app.get('/inscricao', (req, res) => {
   res.render('inscricao', {
     titulo: 'Inscrição',
     distritos,
-    // usa primeiro o FROM_EMAIL (noreply@jorge-silva.com), se existir
-    emailOrganizador: process.env.FROM_EMAIL || process.env.ADMIN_EMAIL || 'jorge.28.silva.sam@gmail.com',
+    // usa segundo o FROM_EMAIL (noreply@jorge-silva.com), se existir
+    emailOrganizador: process.env.ADMIN_EMAIL || process.env.FROM_EMAIL || 'jorge.28.silva.sam@gmail.com',
     telemovelOrganizador: '+351 917 039 719'
   });
 });

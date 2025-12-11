@@ -94,7 +94,7 @@ async function guardarInscricoes() {
 }
 
 // Data/hora do evento (para o contador regressivo)
-const EVENTO_DATA = '2026-06-15T13:00:00'; // 15 Junho 2026, 13h00
+const EVENTO_DATA = '2026-01-10T13:00:00'; // 10 Janeiro 2026, 13h00
 
 function requireAdmin(req, res, next) {
   if (!req.session.isAdmin) {

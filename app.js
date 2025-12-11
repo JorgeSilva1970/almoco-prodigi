@@ -16,7 +16,8 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const FROM_EMAIL = process.env.FROM_EMAIL || process.env.ADMIN_EMAIL;
+const FROM_EMAIL  = process.env.FROM_EMAIL || process.env.ADMIN_EMAIL;
+const BASE_URL    = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 const app = express();
 const PORT = 3000;

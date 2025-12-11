@@ -1,12 +1,16 @@
 // Contador regressivo
-// Contador regressivo
 function iniciarContador() {
   const alvoStr = window.DATA_EVENTO;
-  if (!alvoStr) return;
+  if (!alvoStr) {
+    console.warn('⚠ DATA_EVENTO não definido na página.');
+    return;
+  }
 
-  // Ajusta aqui o ID conforme o teu HTML: 'contador-texto' ou 'contador'
   const elemento = document.getElementById('contador-texto');
-  if (!elemento) return;
+  if (!elemento) {
+    console.warn('⚠ Elemento #contador-texto não encontrado.');
+    return;
+  }
 
   const dataEvento = new Date(alvoStr);
 
@@ -24,12 +28,16 @@ function iniciarContador() {
     const dias     = Math.floor(totalSeg / 86400);
     const horas    = Math.floor((totalSeg % 86400) / 3600);
     const minutos  = Math.floor((totalSeg % 3600) / 60);
+    const segundos = totalSeg % 60;
 
-    elemento.textContent = `${dias} dias, ${horas} horas e ${minutos} minutos`;
+    elemento.textContent =
+      `${dias} dias, ${horas} horas, ${minutos} minutos e ${segundos} segundos`;
   }
 
-  atualizar();                       // atualiza logo ao carregar
-  const timer = setInterval(atualizar, 60000); // atualiza de minuto a minuto
+  atualizar();                    // atualiza logo ao carregar
+  const timer = setInterval(atualizar, 1000); // atualiza a cada segundo
+
+  console.log('⏱ Contador iniciado para:', dataEvento.toISOString());
 }
 
 // ---------- Distritos -> Concelhos (via API) ----------

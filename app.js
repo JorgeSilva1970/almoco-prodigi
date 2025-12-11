@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 import session from 'express-session';
+import { MailerSend, EmailParams, Sender, Recipient } from "@mailersend/mailersend";
 
 dotenv.config();
 
@@ -21,6 +22,27 @@ const BASE_URL    = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 const app = express();
 const PORT = 3000;
+
+
+//----------- CONFIG MAILERSEND TOKEN API ---------------
+const mailersend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_TOKEN,
+});
+
+const defaultFrom = new Sender("noreply@jorge-silva.com", "mail@jorge-silva.com", "jorge.28.silva.sam@jorge-silva.com");
+
+async function enviarEmail(toEmail, toNome, assunto, textBody, htmlBody) {
+  const recipients = [new Recipient(toEmail, toNome)];
+
+  const emailParams = new EmailParams()
+    .setFrom(defaultFrom)
+    .setTo(recipients)
+    .setSubject(assunto)
+    .setText(textBody)
+    .setHtml(htmlBody);
+
+  await mailersend.email.send(emailParams);
+}
 
 // --------- CONFIG SESSION (para login admin) ----------
 app.use(session({
@@ -341,16 +363,30 @@ ID: ${novaInscricao.id}
     `
   };
 
+  
   try {
     // Envia os dois emails em paralelo
     await Promise.all([
-      transporter.sendMail(mailParaParticipante),
-      transporter.sendMail(mailParaAdmin)
-    ]);
+  enviarEmail(
+    novaInscricao.email,
+    novaInscricao.nome,
+    'Confirmação de inscrição - Almoço Prodigi 2025',
+    mailParaParticipante.text,
+    mailParaParticipante.html
+  ),
+  enviarEmail(
+    process.env.ADMIN_EMAIL,
+    'Organizador',
+    'Nova inscrição - Almoço Prodigi 2025',
+    mailParaAdmin.text,
+    mailParaAdmin.html
+  )
+]);
   } catch (err) {
     console.error('Erro ao enviar email(s):', err);
     // Não bloqueia a inscrição; apenas regista o erro
   }
+
 
   // Página de confirmação
   res.render('confirmacao', {

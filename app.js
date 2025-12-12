@@ -479,6 +479,102 @@ app.get('/admin/export-csv', requireAdmin, (req, res) => {
   res.send(csv);
 });
 
+// Admin envia mail a recordar data do almoço
+
+// Enviar email de recordatório para todos os inscritos ativos
+app.post('/admin/enviar-recordatorio', requireAdmin, async (req, res) => {
+  const { mensagemExtra } = req.body || {};
+
+  // Só os que não estão cancelados
+  const ativos = inscricoes.filter(i => !i.cancelado);
+
+  if (ativos.length === 0) {
+    return res.render('admin', {
+      titulo: 'Painel de Administração',
+      inscricoes,
+      erro: 'Não há inscritos ativos para enviar o recordatório.'
+    });
+  }
+
+  // Informação sobre a data/hora do evento
+  const dataEvento = new Date(EVENTO_DATA);
+  const dataFormatada = dataEvento.toLocaleDateString('pt-PT', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  const horaFormatada = dataEvento.toLocaleTimeString('pt-PT', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+  // Cria um array de Promises de envio de email
+  const envios = ativos.map((inscricao) => {
+    const cancelLink = `${baseUrl}/anular/${inscricao.id}`;
+
+    const textoExtra = mensagemExtra
+      ? `\n\nMensagem do organizador:\n${mensagemExtra}`
+      : '';
+
+    const mail = {
+      from: `"Almoço Prodigi" <${FROM_EMAIL}>`,
+      to: inscricao.email,
+      subject: 'Recordatório - Almoço Prodigi 2025',
+      text: `Olá ${inscricao.nome},
+
+O nosso Almoço da Turma Prodigi aproxima-se!
+
+📅 Data: ${dataFormatada}
+🕒 Hora: ${horaFormatada}
+
+Contamos contigo!
+
+Se, por algum motivo, precisares de anular a tua presença, podes usar este link:
+${cancelLink}
+${textoExtra}
+
+Um abraço,
+A organização`,
+      html: `
+        <p>Olá <strong>${inscricao.nome}</strong>,</p>
+        <p>O nosso <strong>Almoço da Turma Prodigi</strong> está a aproximar-se!</p>
+        <p>
+          📅 <strong>Data:</strong> ${dataFormatada}<br>
+          🕒 <strong>Hora:</strong> ${horaFormatada}
+        </p>
+        <p>Contamos contigo!</p>
+        <p>Se precisares de anular a tua presença, podes usar este link:</p>
+        <p><a href="${cancelLink}">${cancelLink}</a></p>
+        ${mensagemExtra ? `<hr><p><strong>Mensagem do organizador:</strong><br>${mensagemExtra}</p>` : ''}
+        <p>Um abraço,<br>A organização</p>
+      `
+    };
+
+    return transporter.sendMail(mail);
+  });
+
+  try {
+    await Promise.all(envios);
+
+    res.render('admin', {
+      titulo: 'Painel de Administração',
+      inscricoes,
+      msg: `Recordatório enviado para ${ativos.length} inscrito(s).`
+    });
+  } catch (err) {
+    console.error('Erro a enviar recordatórios:', err);
+    res.render('admin', {
+      titulo: 'Painel de Administração',
+      inscricoes,
+      erro: 'Ocorreu um erro ao enviar alguns emails de recordatório. Vê o log do servidor.'
+    });
+  }
+});
+
+
 // ----------------------------------------------------
 // ROTA /test-email (para testar MailerSend API)
 // ----------------------------------------------------

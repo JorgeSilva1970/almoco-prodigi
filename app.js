@@ -55,7 +55,7 @@ let distritosConcelhos = [];
 let concelhosPorDistrito = {};
 
 // Data/hora do evento (para o contador e recordatório)
-const EVENTO_DATA = '2026-01-10T13:00:00'; // 10 Janeiro 2026, 13h00
+const EVENTO_DATA = '2026-02-21T13:00:00'; // 21 Fevereiro 2026, 13h00
 
 // Menu completo (para página de menus + selects da inscrição)
 const MENU_COMPLETO = {

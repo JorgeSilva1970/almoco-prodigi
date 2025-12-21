@@ -7,17 +7,17 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>{{titulo}}</h1>
+    <h1>Anulação de Inscrição - Almoço Prodigi</h1>
     <nav>
       <a href="/">Início</a>
-      <a href="/onde-quando">Onde & Quando</a>
-      <a href="/menus">Menus & Preços</a>
-      <a href="/inscricao">Inscrição</a>
+      <a href="/inscricao">Nova Inscrição</a>
       <a href="/lista">Lista de Inscritos</a>
     </nav>
   </header>
 
   <main class="conteudo">
+    <h2>Anular inscrição</h2>
+
     {{#if erro}}
       <p class="erro">{{erro}}</p>
     {{/if}}
@@ -25,6 +25,19 @@
     {{#if mensagem}}
       <p class="ok">{{mensagem}}</p>
     {{/if}}
+
+    <p>
+      Se chegaste aqui através do link do email, a anulação já foi tratada em cima.<br>
+      Em alternativa, podes anular uma inscrição ativa indicando o email utilizado:
+    </p>
+
+    <form class="form-anular" method="post" action="/anular-por-email">
+      <label>
+        Email usado na inscrição:
+        <input type="email" name="email" required>
+      </label>
+      <button type="submit" class="btn-secundario">Anular por email</button>
+    </form>
   </main>
 </body>
 </html>

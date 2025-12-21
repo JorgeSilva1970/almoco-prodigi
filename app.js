@@ -1,30 +1,62 @@
+// app.js
+// ----------------------------------------------------
+// Aplicação Almoço Prodigi 2025/2026
+// Express + Handlebars + MailerSend (API HTTP, sem SMTP)
+// ----------------------------------------------------
+
 import express from 'express';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
-import nodemailer from 'nodemailer';
 import session from 'express-session';
+import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
+
+// ----------------------------------------------------
+// VARIÁVEIS DE AMBIENTE
+// ----------------------------------------------------
 
 dotenv.config();
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------- CONFIG SMTP (MailerSend) ----------
+// email de origem usado nos envios (tem de existir no MailerSend)
+const FROM_EMAIL = process.env.FROM_EMAIL || process.env.ADMIN_EMAIL;
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,         // smtp.mailersend.net
-  port: Number(process.env.SMTP_PORT) || 587,
-  secure: false,                       // STARTTLS em 587
-  auth: {
-    user: process.env.SMTP_USER,       // API Key MailerSend
-    pass: process.env.SMTP_PASS        // Secret Key MailerSend
-  }
+// URL base do site (produção ou localhost)
+const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+// ----------------------------------------------------
+// CRIAR APP EXPRESS
+// ----------------------------------------------------
+
+const app = express();
+
+// ----------------------------------------------------
+// CONFIGURAÇÃO DO MAILERSEND (API TOKEN HTTP)
+// ----------------------------------------------------
+
+const mailersend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_TOKEN, // definir no .env / Render
 });
 
-const FROM_EMAIL = process.env.FROM_EMAIL || process.env.ADMIN_EMAIL;
-const BASE_URL   = process.env.BASE_URL || `http://localhost:${PORT}`;
+const defaultFrom = new Sender(FROM_EMAIL, 'Almoço Prodigi');
 
-// ---------- CONFIG SESSION (para login admin) ----------
+// Função utilitária para enviar um email via MailerSend
+async function enviarEmail(toEmail, toNome, assunto, textBody, htmlBody) {
+  const recipients = [new Recipient(toEmail, toNome)];
+
+  const emailParams = new EmailParams()
+    .setFrom(defaultFrom)
+    .setTo(recipients)
+    .setSubject(assunto)
+    .setText(textBody)
+    .setHtml(htmlBody);
+
+  await mailersend.email.send(emailParams);
+}
+
+// ----------------------------------------------------
+// CONFIG SESSION (para login admin)
+// ----------------------------------------------------
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'muda-este-segredo-em-producao',
@@ -32,18 +64,17 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// ---------- CONFIGURAÇÃO DO EXPRESS ----------
+// ----------------------------------------------------
+// CONFIGURAÇÃO DO EXPRESS
+// ----------------------------------------------------
 
-// motor de views (hbs -> Handlebars)
 app.set('view engine', 'hbs');
-
-// para ler dados de formulários (POST)
 app.use(express.urlencoded({ extended: true }));
-
-// para servir ficheiros estáticos (CSS, JS, imagens)
 app.use(express.static('public'));
 
-// --------- "BASE DE DADOS" EM FICHEIRO JSON ----------
+// ----------------------------------------------------
+// "BASE DE DADOS" EM FICHEIROS JSON
+// ----------------------------------------------------
 
 const DB_FILE = './inscricoes.json';
 const DIST_CONC_FILE = './Lista_distrito_concelho.json';
@@ -54,45 +85,12 @@ let proximoId = 1;
 let distritosConcelhos = [];
 let concelhosPorDistrito = {};
 
-// Data/hora do evento (para o contador e recordatório)
-const EVENTO_DATA = '2026-02-21T13:00:00'; // 21 Fevereiro 2026, 13h00
-
-// Menu completo (para página de menus + selects da inscrição)
-const MENU_COMPLETO = {
-  entradas: [
-    'Pão, azeitonas temperadas, tábua de queijos e enchidos',
-    'Rissóis de camarão, rolinhos de linguiça'
-  ],
-  sopa: 'Sopa de legumes',
-  peixe: [
-    'Bacalhau à Dona São',
-    'Bacalhau com broa de milho e batata a murro',
-    'Arroz de tamboril com marisco (+3€ por pessoa)'
-  ],
-  carne: [
-    'Lombinhos de porco com pêssego e ameixa com molho de cogumelos',
-    'Lombinhos de porco fritos com castanhas',
-    'Vitela assada no forno com legumes'
-  ],
-  sobremesas: [
-    'Pijaminha de frutas com gelado e chocolate quente',
-    'Semi-frio de frutos silvestres',
-    'Crepe com gelado de nata e chocolate quente',
-    'Profiteroles com gelado e chocolate quente'
-  ],
-  precoPorPessoa: '35,00 €',
-  criancas4a10: '50%',
-  criancasAte4: 'Grátis'
-};
-
-// ---------- FUNÇÕES AUXILIARES ----------
-
+// Carrega lista de distritos/concelhos
 async function carregarDistritosConcelhos() {
   try {
     const data = await fs.readFile(DIST_CONC_FILE, 'utf-8');
     distritosConcelhos = JSON.parse(data);
 
-    // construir um mapa { "Aveiro": [ "Águeda", ... ], ... }
     concelhosPorDistrito = {};
     distritosConcelhos.forEach(entry => {
       concelhosPorDistrito[entry.distrito] = entry.concelhos;
@@ -104,16 +102,15 @@ async function carregarDistritosConcelhos() {
   }
 }
 
+// Carrega inscrições do ficheiro JSON
 async function carregarInscricoes() {
   try {
     const data = await fs.readFile(DB_FILE, 'utf-8');
     inscricoes = JSON.parse(data);
 
-    // calcular próximo ID
     const maxId = inscricoes.reduce((max, i) => i.id > max ? i.id : max, 0);
     proximoId = maxId + 1;
   } catch (err) {
-    // se ficheiro não existir ou estiver vazio, começamos do zero
     console.log('A iniciar BD de inscrições:', err.message);
     inscricoes = [];
     proximoId = 1;
@@ -121,32 +118,15 @@ async function carregarInscricoes() {
   }
 }
 
+// Guarda inscrições no ficheiro JSON
 async function guardarInscricoes() {
   await fs.writeFile(DB_FILE, JSON.stringify(inscricoes, null, 2), 'utf-8');
 }
 
-// resumo de menus para o restaurante (apenas inscrições ativas)
-function gerarResumoMenus(lista) {
-  const ativos = lista.filter(i => !i.cancelado);
+// Data/hora do evento (para o contador regressivo)
+const EVENTO_DATA = '2026-02-21T13:00:00'; // ajusta aqui se muda a data
 
-  const contar = (campo) => {
-    const mapa = {};
-    ativos.forEach(i => {
-      const valor = i[campo];
-      if (!valor) return;
-      mapa[valor] = (mapa[valor] || 0) + 1;
-    });
-    return mapa;
-  };
-
-  return {
-    peixe: contar('pratoPeixe'),
-    carne: contar('pratoCarne'),
-    sobremesa: contar('sobremesa')
-  };
-}
-
-// middleware de proteção de rotas admin
+// Middleware simples para proteger rotas admin
 function requireAdmin(req, res, next) {
   if (!req.session.isAdmin) {
     return res.redirect('/admin/login');
@@ -154,7 +134,9 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-// ---------- ROTAS PÚBLICAS ----------
+// ----------------------------------------------------
+// ROTAS PÚBLICAS
+// ----------------------------------------------------
 
 // Página inicial
 app.get('/', (req, res) => {
@@ -167,15 +149,14 @@ app.get('/', (req, res) => {
 // Onde e quando
 app.get('/onde-quando', (req, res) => {
   res.render('onde-quando', {
-    titulo: 'Onde e Quando'
+    titulo: 'Onde e Quando',
   });
 });
 
 // Menus e Preços
 app.get('/menus', (req, res) => {
   res.render('menus', {
-    titulo: 'Menus & Preços',
-    menu: MENU_COMPLETO
+    titulo: 'Menus e Preços',
   });
 });
 
@@ -186,20 +167,24 @@ app.get('/inscricao', (req, res) => {
   res.render('inscricao', {
     titulo: 'Inscrição',
     distritos,
-    opcoesPeixe: MENU_COMPLETO.peixe,
-    opcoesCarne: MENU_COMPLETO.carne,
-    opcoesSobremesa: MENU_COMPLETO.sobremesas,
-    emailOrganizador: process.env.ADMIN_EMAIL || process.env.FROM_EMAIL || 'jorge.28.silva.sam@gmail.com',
+    emailOrganizador: FROM_EMAIL,
     telemovelOrganizador: '+351 917 039 719'
   });
 });
 
+// Página para mostrar formulário de anulação por email
+app.get('/anular', (req, res) => {
+  res.render('cancelar', {
+    titulo: 'Anulação de Inscrição'
+  });
+});
+
+// API para popular concelhos por distrito (AJAX)
 app.get('/api/concelhos', (req, res) => {
-  // devolve algo como { "Aveiro": ["Águeda", ...], "Beja": [...] }
   res.json(concelhosPorDistrito);
 });
 
-// Galeria "Relembrar os velhos tempos"
+// Galeria
 app.get('/galeria', (req, res) => {
   const fotos = [
     { url: 'https://via.placeholder.com/300x200?text=Turma+1', legenda: 'Primeiro dia de aulas' },
@@ -213,9 +198,8 @@ app.get('/galeria', (req, res) => {
   });
 });
 
-// Contacto do organizador
+// Contacto
 app.get('/contacto', (req, res) => {
-  // 1) Organizador(es)
   const organizadores = [
     {
       nome: 'Jorge Silva',
@@ -224,7 +208,6 @@ app.get('/contacto', (req, res) => {
     }
   ];
 
-  // 2) Contactos dos inscritos (só os ativos, não cancelados)
   const contactosInscritos = inscricoes.filter(i => !i.cancelado);
 
   res.render('contacto', {
@@ -234,7 +217,7 @@ app.get('/contacto', (req, res) => {
   });
 });
 
-// Sugestão de alojamento
+// Alojamento
 app.get('/alojamento', (req, res) => {
   const hoteis = [
     {
@@ -260,8 +243,23 @@ app.get('/alojamento', (req, res) => {
   });
 });
 
-// ---------- ROTAS DE INSCRIÇÃO (POST / CANCELAR) ----------
+// Lista pública de inscritos (sem detalhes de menus)
+app.get('/lista', (req, res) => {
+  const ativos = inscricoes.filter(i => !i.cancelado);
+  const contador = ativos.length;
 
+  res.render('lista', {
+    titulo: 'Lista de Inscritos',
+    inscritos: ativos,
+    contador
+  });
+});
+
+// ----------------------------------------------------
+// ROTAS DE INSCRIÇÃO (POST + ANULAÇÃO)
+// ----------------------------------------------------
+
+// Receber dados do formulário de inscrição (POST)
 app.post('/inscricao', async (req, res) => {
   const {
     nome,
@@ -269,16 +267,17 @@ app.post('/inscricao', async (req, res) => {
     email,
     distrito,
     concelho,
-    menu,
+    menu,          // geral (ex: "Menu Adulto")
     pratoPeixe,
     pratoCarne,
     sobremesa
   } = req.body;
 
-  if (!nome || !telefone || !email || !distrito || !concelho || !menu) {
+  if (!nome || !telefone || !email || !distrito || !concelho || !menu ||
+      !pratoPeixe || !pratoCarne || !sobremesa) {
     return res.status(400).render('confirmacao', {
       titulo: 'Erro na Inscrição',
-      erro: 'Por favor preenche todos os campos obrigatórios.'
+      erro: 'Por favor preenche todos os campos obrigatórios (incluindo as escolhas do menu).'
     });
   }
 
@@ -297,94 +296,95 @@ app.post('/inscricao', async (req, res) => {
     criadoEm: new Date()
   };
 
-  // Guarda em memória
   inscricoes.push(novaInscricao);
-
-  // Guarda no ficheiro JSON
   await guardarInscricoes();
 
-  // ----- EMAILS -----
   const cancelLink = `${BASE_URL}/anular/${novaInscricao.id}`;
 
-  // Email para o participante
-  const mailParaParticipante = {
-    from: `"Almoço Prodigi" <${FROM_EMAIL}>`,
-    to: novaInscricao.email,
-    subject: 'Confirmação de inscrição - Almoço Prodigi 2025',
-    text: `Olá ${novaInscricao.nome},
+  const resumoMenu = `
+Menu escolhido: ${novaInscricao.menu}
+Peixe: ${novaInscricao.pratoPeixe}
+Carne: ${novaInscricao.pratoCarne}
+Sobremesa: ${novaInscricao.sobremesa}
+`.trim();
+
+  const textoParticipante = `Olá ${novaInscricao.nome},
 
 A tua inscrição para o Almoço/Jantar de Turma Prodigi 2025 foi registada com sucesso.
 
-Resumo da tua escolha de menu:
-- Prato de peixe:   ${novaInscricao.pratoPeixe || 'n/d'}
-- Prato de carne:   ${novaInscricao.pratoCarne || 'n/d'}
-- Sobremesa:        ${novaInscricao.sobremesa || 'n/d'}
+${resumoMenu}
 
 Se, por algum motivo, precisares de anular a tua presença, usa o link seguinte:
 ${cancelLink}
 
-Obrigado e até breve!`,
-    html: `
-      <p>Olá <strong>${novaInscricao.nome}</strong>,</p>
-      <p>A tua inscrição para o <strong>Almoço/Jantar de Turma Prodigi 2025</strong> foi registada com sucesso.</p>
+Obrigado e até breve!`;
 
-      <h4>Resumo da tua escolha de menu:</h4>
-      <ul>
-        <li><strong>Prato de peixe:</strong> ${novaInscricao.pratoPeixe || 'n/d'}</li>
-        <li><strong>Prato de carne:</strong> ${novaInscricao.pratoCarne || 'n/d'}</li>
-        <li><strong>Sobremesa:</strong> ${novaInscricao.sobremesa || 'n/d'}</li>
-      </ul>
+  const htmlParticipante = `
+    <p>Olá <strong>${novaInscricao.nome}</strong>,</p>
+    <p>A tua inscrição para o <strong>Almoço/Jantar de Turma Prodigi 2025</strong> foi registada com sucesso.</p>
+    <h4>Resumo do menu escolhido</h4>
+    <ul>
+      <li><strong>Menu:</strong> ${novaInscricao.menu}</li>
+      <li><strong>Peixe:</strong> ${novaInscricao.pratoPeixe}</li>
+      <li><strong>Carne:</strong> ${novaInscricao.pratoCarne}</li>
+      <li><strong>Sobremesa:</strong> ${novaInscricao.sobremesa}</li>
+    </ul>
+    <p>Se precisares de anular a tua presença, clica neste link:</p>
+    <p><a href="${cancelLink}">${cancelLink}</a></p>
+    <p>Obrigado e até breve!</p>
+  `;
 
-      <p>Se precisares de anular a tua presença, clica neste link:</p>
-      <p><a href="${cancelLink}">${cancelLink}</a></p>
-      <p>Obrigado e até breve!</p>
-    `
-  };
-
-  // Email para o admin
-  const mailParaAdmin = {
-    from: `"Almoço Prodigi" <${FROM_EMAIL}>`,
-    to: process.env.ADMIN_EMAIL,
-    subject: 'Nova inscrição - Almoço Prodigi 2025',
-    text: `Nova inscrição registada:
+  const textoAdmin = `Nova inscrição registada:
 
 Nome: ${novaInscricao.nome}
 Email: ${novaInscricao.email}
 Telefone: ${novaInscricao.telefone}
 Distrito: ${novaInscricao.distrito}
 Concelho: ${novaInscricao.concelho}
-Menu escolhido: ${novaInscricao.menu}
-Prato de peixe: ${novaInscricao.pratoPeixe || 'n/d'}
-Prato de carne: ${novaInscricao.pratoCarne || 'n/d'}
-Sobremesa: ${novaInscricao.sobremesa || 'n/d'}
+
+${resumoMenu}
+
 ID: ${novaInscricao.id}
-`,
-    html: `
-      <h3>Nova inscrição registada</h3>
-      <p><strong>Nome:</strong> ${novaInscricao.nome}</p>
-      <p><strong>Email:</strong> ${novaInscricao.email}</p>
-      <p><strong>Telefone:</strong> ${novaInscricao.telefone}</p>
-      <p><strong>Distrito:</strong> ${novaInscricao.distrito}</p>
-      <p><strong>Concelho:</strong> ${novaInscricao.concelho}</p>
-      <p><strong>Menu escolhido:</strong> ${novaInscricao.menu}</p>
-      <p><strong>Prato de peixe:</strong> ${novaInscricao.pratoPeixe || 'n/d'}</p>
-      <p><strong>Prato de carne:</strong> ${novaInscricao.pratoCarne || 'n/d'}</p>
-      <p><strong>Sobremesa:</strong> ${novaInscricao.sobremesa || 'n/d'}</p>
-      <p><strong>ID:</strong> ${novaInscricao.id}</p>
-    `
-  };
+`;
+
+  const htmlAdmin = `
+    <h3>Nova inscrição registada</h3>
+    <p><strong>Nome:</strong> ${novaInscricao.nome}</p>
+    <p><strong>Email:</strong> ${novaInscricao.email}</p>
+    <p><strong>Telefone:</strong> ${novaInscricao.telefone}</p>
+    <p><strong>Distrito:</strong> ${novaInscricao.distrito}</p>
+    <p><strong>Concelho:</strong> ${novaInscricao.concelho}</p>
+    <h4>Menu</h4>
+    <ul>
+      <li><strong>Menu:</strong> ${novaInscricao.menu}</li>
+      <li><strong>Peixe:</strong> ${novaInscricao.pratoPeixe}</li>
+      <li><strong>Carne:</strong> ${novaInscricao.pratoCarne}</li>
+      <li><strong>Sobremesa:</strong> ${novaInscricao.sobremesa}</li>
+    </ul>
+    <p><strong>ID:</strong> ${novaInscricao.id}</p>
+  `;
 
   try {
     await Promise.all([
-      transporter.sendMail(mailParaParticipante),
-      transporter.sendMail(mailParaAdmin)
+      enviarEmail(
+        novaInscricao.email,
+        novaInscricao.nome,
+        'Confirmação de inscrição - Almoço Prodigi 2025',
+        textoParticipante,
+        htmlParticipante
+      ),
+      enviarEmail(
+        process.env.ADMIN_EMAIL,
+        'Organizador',
+        'Nova inscrição - Almoço Prodigi 2025',
+        textoAdmin,
+        htmlAdmin
+      )
     ]);
   } catch (err) {
     console.error('Erro ao enviar email(s):', err);
-    // Não bloqueia a inscrição; apenas regista o erro
   }
 
-  // Página de confirmação
   res.render('confirmacao', {
     titulo: 'Inscrição Confirmada',
     nome: novaInscricao.nome,
@@ -393,19 +393,7 @@ ID: ${novaInscricao.id}
   });
 });
 
-// Lista pública de inscritos
-app.get('/lista', (req, res) => {
-  const ativos = inscricoes.filter(i => !i.cancelado);
-  const contador = ativos.length;
-
-  res.render('lista', {
-    titulo: 'Lista de Inscritos',
-    inscritos: ativos,
-    contador
-  });
-});
-
-// Página para cancelar inscrição (via link com ID)
+// Cancelar inscrição via link com ID
 app.get('/anular/:id', async (req, res) => {
   const id = Number(req.params.id);
   const inscricao = inscricoes.find(i => i.id === id);
@@ -433,7 +421,7 @@ app.get('/anular/:id', async (req, res) => {
   });
 });
 
-// Anular inscrição usando o email (form na página de cancelamento)
+// Anular inscrição usando o email
 app.post('/anular-por-email', async (req, res) => {
   const { email } = req.body;
 
@@ -464,16 +452,25 @@ app.post('/anular-por-email', async (req, res) => {
   });
 });
 
-// ---------- ROTAS ADMIN (LOGIN, PAINEL, CSV, RECORDATÓRIO) ----------
+// ----------------------------------------------------
+// ROTAS ADMIN (PROTEGIDAS COM LOGIN)
+// ----------------------------------------------------
 
-// Form de login admin
+// Painel admin
+app.get('/admin', requireAdmin, (req, res) => {
+  res.render('admin', {
+    titulo: 'Painel de Administração',
+    inscricoes
+  });
+});
+
+// Login admin
 app.get('/admin/login', (req, res) => {
   res.render('admin-login', {
     titulo: 'Login de Administração'
   });
 });
 
-// Submeter login admin
 app.post('/admin/login', (req, res) => {
   const { password } = req.body;
   const adminPass = process.env.ADMIN_PASSWORD || 'prodigi2025';
@@ -489,17 +486,6 @@ app.post('/admin/login', (req, res) => {
   });
 });
 
-// Painel admin protegido por login
-app.get('/admin', requireAdmin, (req, res) => {
-  const resumoMenus = gerarResumoMenus(inscricoes);
-
-  res.render('admin', {
-    titulo: 'Painel de Administração',
-    inscricoes,
-    resumoMenus
-  });
-});
-
 // Logout
 app.get('/admin/logout', (req, res) => {
   req.session.destroy(() => {
@@ -507,16 +493,14 @@ app.get('/admin/logout', (req, res) => {
   });
 });
 
-// Exportar CSV
+// Exportar CSV com menus detalhados
 app.get('/admin/export-csv', requireAdmin, (req, res) => {
   const ativos = inscricoes.filter(i => !i.cancelado);
 
-  const header = 'Nome;Email;Telefone;Distrito;Concelho;Menu;PratoPeixe;PratoCarne;Sobremesa\n';
-
+  const header = 'Nome;Email;Telefone;Distrito;Concelho;Menu;Peixe;Carne;Sobremesa\n';
   const linhas = ativos.map(i =>
-    `${i.nome};${i.email};${i.telefone};${i.distrito};${i.concelho};${i.menu};${i.pratoPeixe || ''};${i.pratoCarne || ''};${i.sobremesa || ''}`
+    `${i.nome};${i.email};${i.telefone};${i.distrito};${i.concelho};${i.menu};${i.pratoPeixe};${i.pratoCarne};${i.sobremesa}`
   );
-
   const csv = header + linhas.join('\n');
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -524,112 +508,110 @@ app.get('/admin/export-csv', requireAdmin, (req, res) => {
   res.send(csv);
 });
 
-// Enviar recordatório para todos os inscritos ativos
+// Enviar email de recordatório para todos os inscritos ativos
 app.post('/admin/enviar-recordatorio', requireAdmin, async (req, res) => {
-  try {
-    const { mensagemExtra } = req.body || {};
-    const ativos = inscricoes.filter(i => !i.cancelado);
+  const { mensagemExtra } = req.body || {};
 
-    if (ativos.length === 0) {
-      return res.render('admin', {
-        titulo: 'Painel de Administração',
-        inscricoes,
-        resumoMenus: gerarResumoMenus(inscricoes),
-        erro: 'Não há inscritos ativos para enviar o recordatório.'
-      });
-    }
+  const ativos = inscricoes.filter(i => !i.cancelado);
 
-    const agora = new Date();
-    const dataEvento = new Date(EVENTO_DATA);
-    const diffMs = dataEvento - agora;
-    const diasFaltam = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
-
-    const dataFormatada = dataEvento.toLocaleDateString('pt-PT', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  if (ativos.length === 0) {
+    return res.render('admin', {
+      titulo: 'Painel de Administração',
+      inscricoes,
+      erro: 'Não há inscritos ativos para enviar o recordatório.'
     });
-    const horaFormatada = dataEvento.toLocaleTimeString('pt-PT', {
-      hour: '2-digit', minute: '2-digit'
-    });
+  }
 
-    const envios = ativos.map(i => {
-      const cancelLink = `${BASE_URL}/anular/${i.id}`;
+  const dataEvento = new Date(EVENTO_DATA);
+  const dataFormatada = dataEvento.toLocaleDateString('pt-PT', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  const horaFormatada = dataEvento.toLocaleTimeString('pt-PT', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
-      const textoExtra = mensagemExtra
-        ? `\n\nMensagem do organizador:\n${mensagemExtra}`
-        : '';
+  const envios = ativos.map((inscricao) => {
+    const cancelLink = `${BASE_URL}/anular/${inscricao.id}`;
 
-      return transporter.sendMail({
-        from: `"Almoço Prodigi" <${FROM_EMAIL}>`,
-        to: i.email,
-        subject: 'Recordatório - Almoço Prodigi 2025',
-        text: `Olá ${i.nome},
+    const textoExtra = mensagemExtra
+      ? `\n\nMensagem do organizador:\n${mensagemExtra}`
+      : '';
 
-O nosso almoço da Turma Prodigi está a aproximar-se!
+    const textBody = `Olá ${inscricao.nome},
 
-Faltam aproximadamente ${diasFaltam} dia(s).
+O nosso Almoço da Turma Prodigi aproxima-se!
 
 📅 Data: ${dataFormatada}
 🕒 Hora: ${horaFormatada}
 
-Se precisares de desmarcar a tua presença, podes:
-- usar este link: ${cancelLink}
-- ou contactar diretamente um dos organizadores.
+Contamos contigo!
 
-${textoExtra}
+Se, por algum motivo, precisares de anular a tua presença, podes usar este link:
+${cancelLink}${textoExtra}
 
 Um abraço,
-A organização`,
-        html: `
-          <p>Olá <strong>${i.nome}</strong>,</p>
-          <p>O nosso <strong>almoço da Turma Prodigi</strong> está a aproximar-se!</p>
-          <p><strong>Faltam aproximadamente ${diasFaltam} dia(s).</strong></p>
-          <p>
-            📅 <strong>Data:</strong> ${dataFormatada}<br>
-            🕒 <strong>Hora:</strong> ${horaFormatada}
-          </p>
-          <p>Se precisares de desmarcar a tua presença, podes:</p>
-          <ul>
-            <li>usar este link: <a href="${cancelLink}">${cancelLink}</a></li>
-            <li>ou contactar diretamente um dos organizadores.</li>
-          </ul>
-          ${mensagemExtra ? `<hr><p><strong>Mensagem do organizador:</strong><br>${mensagemExtra}</p>` : ''}
-          <p>Um abraço,<br>A organização</p>
-        `
-      });
-    });
+A organização`;
 
+    const htmlBody = `
+      <p>Olá <strong>${inscricao.nome}</strong>,</p>
+      <p>O nosso <strong>Almoço da Turma Prodigi</strong> está a aproximar-se!</p>
+      <p>
+        📅 <strong>Data:</strong> ${dataFormatada}<br>
+        🕒 <strong>Hora:</strong> ${horaFormatada}
+      </p>
+      <p>Contamos contigo!</p>
+      <p>Se precisares de anular a tua presença, podes usar este link:</p>
+      <p><a href="${cancelLink}">${cancelLink}</a></p>
+      ${mensagemExtra ? `<hr><p><strong>Mensagem do organizador:</strong><br>${mensagemExtra}</p>` : ''}
+      <p>Um abraço,<br>A organização</p>
+    `;
+
+    return enviarEmail(
+      inscricao.email,
+      inscricao.nome,
+      'Recordatório - Almoço Prodigi 2025',
+      textBody,
+      htmlBody
+    );
+  });
+
+  try {
     await Promise.all(envios);
 
     res.render('admin', {
       titulo: 'Painel de Administração',
       inscricoes,
-      resumoMenus: gerarResumoMenus(inscricoes),
       msg: `Recordatório enviado para ${ativos.length} inscrito(s).`
     });
   } catch (err) {
     console.error('Erro a enviar recordatórios:', err);
-    res.status(500).render('admin', {
+    res.render('admin', {
       titulo: 'Painel de Administração',
       inscricoes,
-      resumoMenus: gerarResumoMenus(inscricoes),
-      erro: 'Ocorreu um erro ao enviar os emails de recordatório.'
+      erro: 'Ocorreu um erro ao enviar alguns emails de recordatório. Vê o log do servidor.'
     });
   }
 });
 
-// ---------- ROTA DE TESTE DE EMAIL ----------
+// ----------------------------------------------------
+// ROTA /test-email (para testar MailerSend API)
+// ----------------------------------------------------
 
 app.get('/test-email', async (req, res) => {
   try {
-    const info = await transporter.sendMail({
-      from: `"Almoço Prodigi" <${FROM_EMAIL}>`,
-      to: process.env.ADMIN_EMAIL,
-      subject: 'Teste de email - Almoço Prodigi',
-      text: 'Este é um email de teste vindo do servidor Node + MailerSend.',
-      html: '<p>Este é um <strong>email de teste</strong> vindo do servidor Node + MailerSend.</p>'
-    });
+    await enviarEmail(
+      process.env.ADMIN_EMAIL,
+      'Organizador',
+      'Teste de email - Almoço Prodigi',
+      'Este é um email de teste vindo do servidor Node + MailerSend.',
+      '<p>Este é um <strong>email de teste</strong> vindo do servidor Node + MailerSend.</p>'
+    );
 
-    console.log('Email de teste enviado:', info.messageId || info);
+    console.log('Email de teste enviado com sucesso.');
     res.send('Email de teste enviado. Verifica a tua caixa de entrada.');
   } catch (err) {
     console.error('Erro ao enviar email de teste:', err);
@@ -637,7 +619,9 @@ app.get('/test-email', async (req, res) => {
   }
 });
 
-// ---------- ARRANCAR SERVIDOR ----------
+// ----------------------------------------------------
+// ARRANCAR SERVIDOR
+// ----------------------------------------------------
 
 async function start() {
   await carregarInscricoes();

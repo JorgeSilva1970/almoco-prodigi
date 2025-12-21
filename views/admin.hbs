@@ -2,16 +2,14 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <header class="topbar">
-    <h1>Painel de Administração - Almoço Prodigi 2025</h1>
+    <h1>Painel de Administração - Almoço Prodigi</h1>
     <nav>
-      <a href="/">Site público</a>
-      <a href="/admin">Admin</a>
+      <a href="/">Ver site</a>
       <a href="/admin/export-csv">Exportar CSV</a>
       <a href="/admin/logout">Sair</a>
     </nav>
@@ -20,12 +18,12 @@
   <main class="conteudo">
     <h2>Inscrições</h2>
 
-    {{#if msg}}
-      <p class="ok">{{msg}}</p>
-    {{/if}}
-
     {{#if erro}}
       <p class="erro">{{erro}}</p>
+    {{/if}}
+
+    {{#if msg}}
+      <p class="ok">{{msg}}</p>
     {{/if}}
 
     {{#if inscricoes.length}}
@@ -64,100 +62,24 @@
         </tbody>
       </table>
     {{else}}
-      <p>Ainda não há inscrições.</p>
+      <p>Não há inscrições registadas.</p>
     {{/if}}
 
-    <hr style="margin:30px 0;">
-
-    <section>
-      <h2>Resumo para o Restaurante</h2>
-
-      <h3>Pratos de Peixe</h3>
-      {{#if resumoMenus.peixe}}
-        <table class="tabela-inscritos">
-          <thead>
-            <tr>
-              <th>Prato</th>
-              <th>Número de pessoas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each resumoMenus.peixe}}
-              <tr>
-                <td>{{@key}}</td>
-                <td>{{this}}</td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{else}}
-        <p>Sem escolhas registadas.</p>
-      {{/if}}
-
-      <h3>Pratos de Carne</h3>
-      {{#if resumoMenus.carne}}
-        <table class="tabela-inscritos">
-          <thead>
-            <tr>
-              <th>Prato</th>
-              <th>Número de pessoas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each resumoMenus.carne}}
-              <tr>
-                <td>{{@key}}</td>
-                <td>{{this}}</td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{else}}
-        <p>Sem escolhas registadas.</p>
-      {{/if}}
-
-      <h3>Sobremesas</h3>
-      {{#if resumoMenus.sobremesa}}
-        <table class="tabela-inscritos">
-          <thead>
-            <tr>
-              <th>Sobremesa</th>
-              <th>Número de pessoas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{#each resumoMenus.sobremesa}}
-              <tr>
-                <td>{{@key}}</td>
-                <td>{{this}}</td>
-              </tr>
-            {{/each}}
-          </tbody>
-        </table>
-      {{else}}
-        <p>Sem escolhas registadas.</p>
-      {{/if}}
-    </section>
-
-    <hr style="margin:30px 0;">
-
-    <section class="secao-contacto">
-      <h2>Enviar email de recordatório</h2>
-      <p>
-        Envia um email a todos os inscritos <strong>ativos</strong> com o número
-        de dias que faltam para o almoço e o link para anular a inscrição.
-      </p>
-
+    <section class="secao-contacto" style="margin-top:30px;">
+      <h3>Enviar recordatório para todos os inscritos ativos</h3>
       <form method="post" action="/admin/enviar-recordatorio">
-        <label for="mensagemExtra">
+        <label>
           Mensagem extra para incluir no email (opcional):
+          <textarea name="mensagemExtra" rows="4" style="width:100%;"></textarea>
         </label>
-        <textarea id="mensagemExtra" name="mensagemExtra" rows="4" style="width:100%;"></textarea>
-
         <button type="submit" class="btn-secundario" style="margin-top:10px;">
-          Enviar recordatório para todos os inscritos ativos
+          Enviar recordatório
         </button>
       </form>
+      <p style="margin-top:10px;font-size:0.9rem;">
+        O recordatório é enviado apenas para inscrições ativas (não canceladas) e inclui o link
+        pessoal para anular a presença.
+      </p>
     </section>
   </main>
 </body>

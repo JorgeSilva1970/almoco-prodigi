@@ -7,28 +7,29 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>Lista de Inscritos</h1>
+    <h1>ENCONTRO DA TURMA PRODIGI - Turma 2025/2026</h1>
     <nav>
       <a href="/">Início</a>
       <a href="/onde-quando">Onde & Quando</a>
       <a href="/menus">Menus & Preços</a>
       <a href="/inscricao">Inscrição</a>
       <a href="/lista">Lista de Inscritos</a>
+      <a href="/galeria">Galeria</a>
+      <a href="/contacto">Contactos</a>
+      <a href="/alojamento">Alojamento</a>
     </nav>
   </header>
 
   <main class="conteudo">
-    <h2>Já somos {{contador}} Prodigis!</h2>
-    <button onclick="window.print()" class="btn-secundario">
-      Imprimir / Guardar em PDF
-    </button>
+    <h2>Lista de Inscritos</h2>
+    <p>Total de inscrições ativas: <strong>{{contador}}</strong></p>
 
     {{#if inscritos.length}}
       <table class="tabela-inscritos">
         <thead>
           <tr>
+            <th>#</th>
             <th>Nome</th>
-            <th>Menu</th>
             <th>Distrito</th>
             <th>Concelho</th>
           </tr>
@@ -36,16 +37,19 @@
         <tbody>
           {{#each inscritos}}
             <tr>
-              <td>{{this.nome}}</td>
-              <td>{{this.menu}}</td>
-              <td>{{this.distrito}}</td>
-              <td>{{this.concelho}}</td>
+              <td>{{@index}}</td>
+              <td>{{nome}}</td>
+              <td>{{distrito}}</td>
+              <td>{{concelho}}</td>
             </tr>
           {{/each}}
         </tbody>
       </table>
+      <p style="margin-top:10px;font-size:0.9rem;">
+        * Por privacidade, as escolhas detalhadas do menu só são visíveis ao administrador.
+      </p>
     {{else}}
-      <p>Ainda não há inscritos. Sê o primeiro!</p>
+      <p>Ainda não há inscrições ativas.</p>
     {{/if}}
   </main>
 </body>

@@ -2,7 +2,6 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
   <script defer src="/js/main.js"></script>
@@ -25,23 +24,28 @@
   <main class="conteudo">
     <h2>Formulário de Inscrição</h2>
 
-    <form method="post" action="/inscricao" class="form-inscricao">
-      <label for="nome">
+    <p>
+      Em caso de dúvida, podes contactar o organizador:
+      <strong>{{emailOrganizador}}</strong> · <strong>{{telemovelOrganizador}}</strong>
+    </p>
+
+    <form class="form-inscricao" method="post" action="/inscricao">
+      <label>
         Nome completo:
-        <input type="text" id="nome" name="nome" required>
+        <input type="text" name="nome" required>
       </label>
 
-      <label for="telefone">
+      <label>
         Telefone:
-        <input type="text" id="telefone" name="telefone" required>
+        <input type="tel" name="telefone" required>
       </label>
 
-      <label for="email">
+      <label>
         Email:
-        <input type="email" id="email" name="email" required>
+        <input type="email" name="email" required>
       </label>
 
-      <label for="distrito">
+      <label>
         Distrito:
         <select id="distrito" name="distrito" required>
           <option value="">-- Seleciona o distrito --</option>
@@ -51,66 +55,83 @@
         </select>
       </label>
 
-      <label for="concelho">
+      <label>
         Concelho:
         <select id="concelho" name="concelho" required>
-          <option value="">-- Seleciona primeiro o distrito --</option>
+          <option value="">-- Seleciona o concelho --</option>
         </select>
       </label>
 
-      <label for="menu">
-        Tipo de menu:
-        <select id="menu" name="menu" required>
-          <option value="">-- Seleciona o tipo de menu --</option>
-          <option value="Adulto">Adulto</option>
-          <option value="Criança 4-10 anos">Criança 4-10 anos</option>
-          <option value="Criança até 4 anos">Criança até 4 anos</option>
+      <label>
+        Menu (adulto/criança):
+        <select name="menu" required>
+          <option value="">-- Escolhe o tipo de menu --</option>
+          <option value="Menu Adulto">Menu Adulto</option>
+          <option value="Menu Criança (4-10 anos)">Menu Criança (4-10 anos)</option>
         </select>
       </label>
 
-      <h3>Escolha do Menu</h3>
+      <h3>Escolhas do Menu</h3>
 
-      <label for="pratoPeixe">
-        Prato de Peixe (1 opção):
-        <select id="pratoPeixe" name="pratoPeixe" required>
-          <option value="">-- Seleciona o prato de peixe --</option>
-          {{#each opcoesPeixe}}
-            <option value="{{this}}">{{this}}</option>
-          {{/each}}
-          <option value="Não pretendo prato de peixe">Não pretendo</option>
+      <label>
+        Prato de Peixe:
+        <select name="pratoPeixe" required>
+          <option value="">-- Escolhe o prato de peixe --</option>
+          <option value="Bacalhau à Dona São">Bacalhau à Dona São</option>
+          <option value="Bacalhau com broa de milho e batata a murro">Bacalhau com broa de milho e batata a murro</option>
+          <option value="Arroz de tamboril com marisco (+3€ por pessoa)">Arroz de tamboril com marisco (+3€ por pessoa)</option>
+          <option value="Não pretendo peixe">Não pretendo peixe</option>
         </select>
       </label>
 
-      <label for="pratoCarne">
-        Prato de Carne (1 opção):
-        <select id="pratoCarne" name="pratoCarne" required>
-          <option value="">-- Seleciona o prato de carne --</option>
-          {{#each opcoesCarne}}
-            <option value="{{this}}">{{this}}</option>
-          {{/each}}
-          <option value="Não pretendo prato de carne">Não pretendo</option>
+      <label>
+        Prato de Carne:
+        <select name="pratoCarne" required>
+          <option value="">-- Escolhe o prato de carne --</option>
+          <option value="Lombinhos de porco com pêssego e ameixa com molho de cogumelos">
+            Lombinhos de porco com pêssego e ameixa com molho de cogumelos
+          </option>
+          <option value="Lombinhos de porco fritos com castanhas">
+            Lombinhos de porco fritos com castanhas
+          </option>
+          <option value="Vitela assada no forno com legumes">
+            Vitela assada no forno com legumes
+          </option>
+          <option value="Não pretendo carne">Não pretendo carne</option>
         </select>
       </label>
 
-      <label for="sobremesa">
-        Sobremesa (1 opção):
-        <select id="sobremesa" name="sobremesa" required>
-          <option value="">-- Seleciona a sobremesa --</option>
-          {{#each opcoesSobremesa}}
-            <option value="{{this}}">{{this}}</option>
-          {{/each}}
-          <option value="Não pretendo sobremesa">Não pretendo</option>
+      <label>
+        Sobremesa:
+        <select name="sobremesa" required>
+          <option value="">-- Escolhe a sobremesa --</option>
+          <option value="Pijaminha de frutas com gelado e chocolate quente">
+            Pijaminha de frutas com gelado e chocolate quente
+          </option>
+          <option value="Semi frio de frutos silvestres">
+            Semi frio de frutos silvestres
+          </option>
+          <option value="Crepe com gelado de nata e chocolate quente">
+            Crepe com gelado de nata e chocolate quente
+          </option>
+          <option value="Profiteroles com gelado e chocolate quente">
+            Profiteroles com gelado e chocolate quente
+          </option>
+          <option value="Não pretendo sobremesa">Não pretendo sobremesa</option>
         </select>
       </label>
 
-      <button type="submit" class="btn-principal">Enviar inscrição</button>
+      <div style="margin-top: 20px;">
+        <button type="submit" class="btn-principal">Submeter Inscrição</button>
+        <button type="reset" class="btn-secundario">Limpar seleção</button>
+      </div>
     </form>
 
-    <section class="secao-contacto" style="margin-top:30px;">
-      <h3>Em caso de dúvida</h3>
+    <section class="secao-anular">
+      <h3>Pretendes anular uma inscrição?</h3>
       <p>
-        Organizador: <strong>{{emailOrganizador}}</strong><br>
-        Telemóvel: <strong>{{telemovelOrganizador}}</strong>
+        Podes anular através do link que recebeste no email de confirmação.<br>
+        Em alternativa, podes usar <a href="/anular">esta página de anulação</a> indicando o email usado na inscrição.
       </p>
     </section>
   </main>

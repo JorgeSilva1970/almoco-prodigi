@@ -2,44 +2,48 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
   <script defer src="/js/main.js"></script>
 </head>
 <body>
   <header class="topbar">
-    <h1>Inscrição</h1>
+    <h1>ENCONTRO DA TURMA PRODIGI - Turma 2025/2026</h1>
     <nav>
       <a href="/">Início</a>
       <a href="/onde-quando">Onde & Quando</a>
       <a href="/menus">Menus & Preços</a>
       <a href="/inscricao">Inscrição</a>
       <a href="/lista">Lista de Inscritos</a>
+      <a href="/galeria">Galeria</a>
+      <a href="/contacto">Contactos</a>
+      <a href="/alojamento">Alojamento</a>
     </nav>
   </header>
 
   <main class="conteudo">
     <h2>Formulário de Inscrição</h2>
 
-    <form action="/inscricao" method="POST" class="form-inscricao">
-      <label>
-        Nome completo*:
-        <input type="text" name="nome" required>
+    <form method="post" action="/inscricao" class="form-inscricao">
+      <label for="nome">
+        Nome completo:
+        <input type="text" id="nome" name="nome" required>
       </label>
 
-      <label>
-        Telemóvel*:
-        <input type="tel" name="telefone" required>
+      <label for="telefone">
+        Telefone:
+        <input type="text" id="telefone" name="telefone" required>
       </label>
 
-      <label>
-        E-mail*:
-        <input type="email" name="email" required>
+      <label for="email">
+        Email:
+        <input type="email" id="email" name="email" required>
       </label>
 
-      <label>
-        Distrito de origem*:
-        <select name="distrito" id="distrito" required>
+      <label for="distrito">
+        Distrito:
+        <select id="distrito" name="distrito" required>
           <option value="">-- Seleciona o distrito --</option>
           {{#each distritos}}
             <option value="{{this}}">{{this}}</option>
@@ -47,46 +51,68 @@
         </select>
       </label>
 
-      <label>
-        Concelho de origem*:
-        <select name="concelho" id="concelho" required>
-          <option value="">-- Primeiro escolhe o distrito --</option>
+      <label for="concelho">
+        Concelho:
+        <select id="concelho" name="concelho" required>
+          <option value="">-- Seleciona primeiro o distrito --</option>
         </select>
       </label>
 
-      <label>
-        Opção de menu*:
-        <select name="menu" required>
-          <option value="">-- Escolhe uma opção --</option>
-          <option value="Carne">Carne</option>
-          <option value="Peixe">Peixe</option>
-          <option value="Vegetariano">Vegetariano</option>
+      <label for="menu">
+        Tipo de menu:
+        <select id="menu" name="menu" required>
+          <option value="">-- Seleciona o tipo de menu --</option>
+          <option value="Adulto">Adulto</option>
+          <option value="Criança 4-10 anos">Criança 4-10 anos</option>
+          <option value="Criança até 4 anos">Criança até 4 anos</option>
         </select>
       </label>
 
-      <button type="submit" class="btn-principal">Submeter Inscrição</button>
-      <button type="reset" class="btn-secundario">Limpar campos</button>
+      <h3>Escolha do Menu</h3>
+
+      <label for="pratoPeixe">
+        Prato de Peixe (1 opção):
+        <select id="pratoPeixe" name="pratoPeixe" required>
+          <option value="">-- Seleciona o prato de peixe --</option>
+          {{#each opcoesPeixe}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+          <option value="Não pretendo prato de peixe">Não pretendo</option>
+        </select>
+      </label>
+
+      <label for="pratoCarne">
+        Prato de Carne (1 opção):
+        <select id="pratoCarne" name="pratoCarne" required>
+          <option value="">-- Seleciona o prato de carne --</option>
+          {{#each opcoesCarne}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+          <option value="Não pretendo prato de carne">Não pretendo</option>
+        </select>
+      </label>
+
+      <label for="sobremesa">
+        Sobremesa (1 opção):
+        <select id="sobremesa" name="sobremesa" required>
+          <option value="">-- Seleciona a sobremesa --</option>
+          {{#each opcoesSobremesa}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+          <option value="Não pretendo sobremesa">Não pretendo</option>
+        </select>
+      </label>
+
+      <button type="submit" class="btn-principal">Enviar inscrição</button>
     </form>
-    <!-- NOVA SECÇÃO: ANULAR INSCRIÇÃO POR EMAIL -->
-    <section class="secao-anular">
-      <h3>Já te inscreveste e precisas de anular?</h3>
-      <p>Podes usar o link enviado por email ou, em alternativa, introduzir o teu email abaixo:</p>
 
-      <form action="/anular-por-email" method="POST" class="form-anular">
-        <label>
-          E-mail utilizado na inscrição*:
-          <input type="email" name="email" required>
-        </label>
-        <button type="submit" class="btn-secundario">Anular inscrição</button>
-      </form>
+    <section class="secao-contacto" style="margin-top:30px;">
+      <h3>Em caso de dúvida</h3>
+      <p>
+        Organizador: <strong>{{emailOrganizador}}</strong><br>
+        Telemóvel: <strong>{{telemovelOrganizador}}</strong>
+      </p>
     </section>
-    <section class="secao-contacto">
-      <h3>Dúvidas ou questões?</h3>
-      <p>Podes contactar o organizador da turma:</p>
-      <p><strong>Email:</strong> <a href="mailto:{{emailOrganizador}}">{{emailOrganizador}}</a></p>
-      <p><strong>Telemóvel:</strong> <a href="tel:{{telemovelOrganizador}}">{{telemovelOrganizador}}</a></p>
-      <p><em>Nota:</em> Após submeteres a inscrição, receberás um email de confirmação com o link para eventual anulação.</p>
-    </section>
-    </main>
+  </main>
 </body>
 </html>

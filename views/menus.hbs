@@ -2,7 +2,6 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -22,46 +21,104 @@
   </header>
 
   <main class="conteudo">
-    <h2>Menu do Almoço</h2>
+    <h2>Menus &amp; Preços</h2>
 
-    <h3>Entradas</h3>
-    <ul>
-      {{#each menu.entradas}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
+    <p>
+      O restaurante preparou um menu completo para o nosso encontro.  
+      <strong>Cada pessoa deverá escolher, no formulário de inscrição, um prato de peixe e um prato de carne.</strong>  
+      Se não pretender algum dos dois, pode selecionar a opção <em>“Não pretendo”</em> no formulário.
+    </p>
 
-    <h3>Sopa</h3>
-    <p>{{menu.sopa}}</p>
+    <section>
+      <h3>Entradas</h3>
+      <div class="menu-card">
+        <ul>
+          <li>Pão</li>
+          <li>Azeitonas temperadas</li>
+          <li>Tábua de queijos e enchidos</li>
+          <li>Rissóis de camarão</li>
+          <li>Rolinhos de linguiça</li>
+        </ul>
+      </div>
+    </section>
 
-    <h3>(1) Prato de Peixe</h3>
-    <ul>
-      {{#each menu.peixe}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
+    <section>
+      <h3>Sopa</h3>
+      <div class="menu-card">
+        <p>Sopa de legumes</p>
+      </div>
+    </section>
 
-    <h3>(1) Prato de Carne</h3>
-    <ul>
-      {{#each menu.carne}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
+    <section>
+      <h3>(1) Prato de Peixe</h3>
+      <p>Na inscrição, escolhe um destes pratos de peixe (ou “Não pretendo peixe”).</p>
+      <div class="menu-card">
+        <ul>
+          <li>Bacalhau à Dona São</li>
+          <li>Bacalhau com broa de milho e batata a murro</li>
+          <li>Arroz de tamboril com marisco <strong>(+ 3&nbsp;€ por pessoa)</strong></li>
+        </ul>
+      </div>
+    </section>
 
-    <h3>(1) Sobremesa</h3>
-    <ul>
-      {{#each menu.sobremesas}}
-        <li>{{this}}</li>
-      {{/each}}
-    </ul>
+    <section>
+      <h3>(1) Prato de Carne</h3>
+      <p>Na inscrição, escolhe também um destes pratos de carne (ou “Não pretendo carne”).</p>
+      <div class="menu-card">
+        <ul>
+          <li>Lombinhos de porco com pêssego e ameixa com molho de cogumelos</li>
+          <li>Lombinhos de porco fritos com castanhas</li>
+          <li>Vitela assada no forno com legumes</li>
+        </ul>
+      </div>
+    </section>
 
-    <h3>Condições</h3>
-    <p><strong>Preço por pessoa:</strong> {{menu.precoPorPessoa}}</p>
-    <p><strong>Crianças dos 4 aos 10 anos:</strong> {{menu.criancas4a10}} do valor</p>
-    <p><strong>Crianças até aos 4 anos:</strong> {{menu.criancasAte4}}</p>
+    <section>
+      <h3>Bebidas</h3>
+      <div class="menu-card">
+        <p>Inclui, à discrição durante a refeição:</p>
+        <ul>
+          <li>Vinho tinto</li>
+          <li>Vinho branco leve</li>
+          <li>Água mineral</li>
+          <li>Refrigerantes</li>
+          <li>Sangria</li>
+          <li>Cervejas</li>
+          <li>Café</li>
+          <li>Whisky, aguardentes, bagaceiras, vinho do Porto, brandy, licores diversos</li>
+        </ul>
+      </div>
+    </section>
 
-    <p style="margin-top:20px;">
-      <a href="/inscricao" class="btn-principal">Fazer inscrição</a>
+    <section>
+      <h3>(1) Sobremesa</h3>
+      <p>No formulário podes escolher uma destas sobremesas (ou “Não pretendo sobremesa”).</p>
+      <div class="menu-card">
+        <ul>
+          <li>Pijaminha de frutas com gelado e chocolate quente</li>
+          <li>Semi frio de frutos silvestres</li>
+          <li>Crepe com gelado de nata e chocolate quente</li>
+          <li>Profiteroles com gelado e chocolate quente</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h3>Preços</h3>
+      <div class="menu-card">
+        <p class="preco-destaque"><strong>Preço por pessoa: 35,00&nbsp;€</strong></p>
+        <ul>
+          <li>Crianças dos 4 aos 10 anos: <strong>50%</strong></li>
+          <li>Crianças até aos 4 anos: <strong>grátis</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <p style="margin-top: 20px; font-size: 0.95rem;">
+      Todas estas informações estão refletidas no formulário de inscrição, onde cada participante
+      indica o <strong>menu</strong>, o <strong>prato de peixe</strong>, o <strong>prato de carne</strong> e a
+      <strong>sobremesa</strong>. As escolhas ficam guardadas para o organizador e são enviadas por email
+      na confirmação da inscrição.
     </p>
   </main>
 </body>

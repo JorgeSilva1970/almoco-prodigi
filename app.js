@@ -198,13 +198,19 @@ app.get('/galeria', (req, res) => {
   });
 });
 
-// Contacto
+// Contacto do organizador
 app.get('/contacto', (req, res) => {
+
   const organizadores = [
     {
       nome: 'Jorge Silva',
       email: process.env.ADMIN_EMAIL || 'jorge.28.silva.sam@gmail.com',
       telefone: '+351 917 039 719'
+    },
+    {
+      nome: 'Jorge Luis',
+      email: 'jpluis2@gmail.com',
+      telefone: '+351 965 879 695'
     }
   ];
 

@@ -377,6 +377,43 @@ img {
 }
 
 /* --------------------------
+   ONDE & QUANDO (layout)
+--------------------------- */
+
+.onde-quando-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.onde-quando-texto {
+  flex: 1;
+}
+
+.onde-quando-imagem {
+  flex: 1;
+  text-align: right;
+}
+
+.onde-quando-imagem img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Versão mobile: texto em cima, foto em baixo */
+@media (max-width: 768px) {
+  .onde-quando-layout {
+    flex-direction: column;
+  }
+
+  .onde-quando-imagem {
+    text-align: left;
+    margin-top: 20px;
+  }
+}
+
+/* --------------------------
    ESTILOS PARA IMPRESSÃO
 --------------------------- */
 

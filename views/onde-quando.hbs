@@ -2,7 +2,6 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
@@ -22,31 +21,42 @@
   </header>
 
   <main class="conteudo">
-    <h2>Onde & Quando</h2>
+    <div class="onde-quando-layout">
+      <!-- Texto à esquerda -->
+      <section class="onde-quando-texto">
+        <h2>Onde & Quando</h2>
 
-    <p><strong>Data:</strong> Sábado, 21 de Fevereiro de 2026, 13h00</p>
+        <p><strong>Data:</strong> Sábado, 21 de Fevereiro de 2026, 13h00</p>
+        <p><strong>Local:</strong> Restaurante Os Severianos - Campelos</p>
+        <p><strong>Morada:</strong> Estrada Nacional 8 2Km 12, 2565-001 Campelos</p>
+        <p><strong>Contacto:</strong> +351 261 982 130</p>
 
-    <p><strong>Local:</strong> Restaurante Os Severianos - Campelos</p>
-      
-    <p><strong>Morada:</strong> Estrada Nacional 8 2Km 12, 2565-001 Campelos</p>
+        <p>
+          <a
+            href="https://www.google.com/maps/dir/?api=1&destination=Restaurante+Os+Severianos,+Campelos,+Portugal"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver no Google Maps / Traçar rota
+          </a>
+        </p>
 
-    <p><strong>Contacto:</strong> +351 261 982 130</p>
+        <p>
+          Junta-te à turma para um almoço de reencontro cheio de boa disposição,
+          memórias e novidades!
+        </p>
 
-    <p>
-      <a href="https://www.google.com/maps/search/?api=1&query=Restaurante+Os+Severianos+Campelos"
-         target="_blank" rel="noopener">
-        Ver no Google Maps / Traçar rota
-      </a>
-    </p>
+        <a href="/inscricao" class="btn-inscricao">Fazer inscrição</a>
+      </section>
 
-    <p>
-      Junta-te à turma para um almoço de reencontro cheio de boa disposição,
-      memórias e novidades!
-    </p>
-
-    <p style="margin-top:20px;">
-      <a href="/inscricao" class="btn-principal">Fazer inscrição</a>
-    </p>
+      <!-- Imagem à direita -->
+      <aside class="onde-quando-imagem">
+        <img
+          src="/img/restaurante-severianos.jpg"
+          alt="Entrada do Restaurante Os Severianos, em Campelos"
+        >
+      </aside>
+    </div>
   </main>
 </body>
 </html>

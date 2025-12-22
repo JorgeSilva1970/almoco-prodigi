@@ -22,21 +22,14 @@
   </header>
 
   <main class="conteudo">
-    <h2>Contactos dos Organizadores</h2>
+
+    <h2>Organizadores</h2>
 
     {{#each organizadores}}
       <div class="organizador">
-        <p><strong>Nome:</strong> {{nome}}</p>
-
-        <p>
-          <strong>Email:</strong>
-          <a href="mailto:{{email}}">{{email}}</a>
-        </p>
-
-        <p>
-          <strong>Telefone:</strong>
-          <a href="tel:{{telefone}}">{{telefone}}</a>
-        </p>
+        <p><strong>{{nome}}</strong></p>
+        <p>Email: <a href="mailto:{{email}}">{{email}}</a></p>
+        <p>Telefone: <a href="tel:{{telefone}}">{{telefone}}</a></p>
       </div>
     {{/each}}
 
@@ -44,13 +37,30 @@
 
     <h2>Contactos dos Inscritos</h2>
 
-    {{#each contactosInscritos}}
-      <div class="organizador">
-        <p><strong>{{nome}}</strong></p>
-        <p>Email: <a href="mailto:{{email}}">{{email}}</a></p>
-        <p>Telefone: {{telefone}}</p>
-      </div>
-    {{/each}}
+    <table class="tabela-contactos">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Distrito</th>
+          <th>Concelho</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#each contactosInscritos}}
+          <tr>
+            <td>{{nome}}</td>
+            <td><a href="mailto:{{email}}">{{email}}</a></td>
+            <td>{{telefone}}</td>
+            <td>{{distrito}}</td>
+            <td>{{concelho}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+
   </main>
 </body>
 </html>

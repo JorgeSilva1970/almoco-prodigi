@@ -214,7 +214,13 @@ app.get('/contacto', (req, res) => {
     }
   ];
 
-  const contactosInscritos = inscricoes.filter(i => !i.cancelado);
+  // Apenas inscritos ativos
+  let contactosInscritos = inscricoes.filter(i => !i.cancelado);
+
+  // Ordenar alfabeticamente por nome
+  contactosInscritos.sort((a, b) =>
+    a.nome.localeCompare(b.nome, 'pt', { sensitivity: 'base' })
+  );
 
   res.render('contacto', {
     titulo: 'Contactos',

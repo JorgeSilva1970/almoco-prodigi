@@ -43,8 +43,71 @@
   </main>
 
   <script>
-    // Passar a data do evento do servidor para o JS
-    window.DATA_EVENTO = "{{dataEvento}}";
+    // Data do evento vinda do servidor (ex: 2026-02-21T13:00:00)
+    const eventoStr = "{{dataEvento}}";
+
+    // Converte "YYYY-MM-DDTHH:mm:ss" para timestamp, assumindo Europe/Lisbon
+    // (evita erros de fuso horário / horário de verão)
+    function toLisbonTimestamp(isoLocal) {
+      const [datePart, timePart] = isoLocal.split("T");
+      const [y, m, d] = datePart.split("-").map(Number);
+      const [hh, mm, ss] = timePart.split(":").map(Number);
+
+      // "palpite" UTC com os mesmos valores
+      const utcGuess = new Date(Date.UTC(y, m - 1, d, hh, mm, ss || 0));
+
+      // transforma esse instante em componentes, mas vistos em Europe/Lisbon
+      const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Europe/Lisbon",
+        hour12: false,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      }).formatToParts(utcGuess);
+
+      const get = (type) => parts.find(p => p.type === type).value;
+
+      const lisbonAsIfUTC = Date.UTC(
+        Number(get("year")),
+        Number(get("month")) - 1,
+        Number(get("day")),
+        Number(get("hour")),
+        Number(get("minute")),
+        Number(get("second"))
+      );
+
+      const offsetMs = lisbonAsIfUTC - utcGuess.getTime();
+      return utcGuess.getTime() - offsetMs;
+    }
+
+    const eventoTs = toLisbonTimestamp(eventoStr);
+
+    function atualizarContador() {
+      const el = document.getElementById("contador-texto");
+      if (!el) return;
+
+      const agora = Date.now();
+      let diff = eventoTs - agora;
+
+      if (diff <= 0) {
+        el.textContent = "É hoje! 🎉";
+        return;
+      }
+
+      // calcula por minutos para evitar “saltos” estranhos
+      const totalMin = Math.floor(diff / 60000);
+      const dias = Math.floor(totalMin / (60 * 24));
+      const horas = Math.floor((totalMin % (60 * 24)) / 60);
+      const minutos = totalMin % 60;
+
+      el.textContent = `${dias} dia(s), ${horas} hora(s) e ${minutos} minuto(s)`;
+    }
+
+    atualizarContador();
+    setInterval(atualizarContador, 30000); // a cada 30s
   </script>
 </body>
 </html>

@@ -69,10 +69,16 @@ img {
   border-radius: 8px;
 }
 
-#contador-texto {
+#contador-texto{
   font-size: 1.3rem;
   font-weight: bold;
-  color: #15803d;
+  color: #020905;
+
+  /* 👇 impede que “... e 28 segundo(s)” passe para baixo */
+  white-space: nowrap;
+
+  /* opcional: ajuda em layouts com flex */
+  display: inline-block;
 }
 
 /* --------------------------

@@ -69,16 +69,26 @@ img {
   border-radius: 8px;
 }
 
-#contador-texto{
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #020905;
-
-  /* 👇 impede que “... e 28 segundo(s)” passe para baixo */
-  white-space: nowrap;
-
-  /* opcional: ajuda em layouts com flex */
+/* ✅ CONTADOR (melhorado visualmente) */
+#contador-texto {
   display: inline-block;
+  margin-top: 6px;
+
+  /* tamanho responsivo: não fica gigante nem minúsculo */
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  font-weight: 800;
+  line-height: 1.25;
+
+  color: #166534;
+  background: #dcfce7;               /* verde suave */
+  border: 1px solid #86efac;         /* borda suave */
+  border-radius: 10px;
+  padding: 10px 12px;
+
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;            /* evita “segundos” rebentar feio */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
 /* --------------------------
@@ -240,6 +250,8 @@ img {
 
 .evento-texto {
   width: 40%;
+  /* ✅ ajuda a não esticar/desalinhar com textos longos */
+  min-width: 280px;
 }
 
 .evento-imagens {
@@ -405,6 +417,7 @@ img {
   .evento-texto,
   .evento-imagens {
     width: 100%;
+    min-width: 0;
   }
 
   .evento-imagens {
@@ -437,6 +450,12 @@ img {
   .onde-quando-imagem {
     text-align: left;
     margin-top: 20px;
+  }
+
+  /* ✅ contador um pouco menor em telemóvel */
+  #contador-texto {
+    font-size: 1.05rem;
+    padding: 10px;
   }
 }
 

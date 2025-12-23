@@ -184,16 +184,29 @@ app.get('/api/concelhos', (req, res) => {
   res.json(concelhosPorDistrito);
 });
 
-// Galeria
+// Galeria "Relembrar os bons momentos"
 app.get('/galeria', (req, res) => {
   const fotos = [
-    { url: 'https://via.placeholder.com/300x200?text=Turma+1', legenda: 'Primeiro dia de aulas' },
-    { url: 'https://via.placeholder.com/300x200?text=Turma+2', legenda: 'Projeto final' },
-    { url: 'https://via.placeholder.com/300x200?text=Turma+3', legenda: 'Momentos Prodigi' }
+    {
+      url: '/img/Aula_1.jpg',
+      legenda: 'Primeiros dias na Prodigi – nervos, expectativas e muitos sonhos'
+    },
+    {
+      url: '/img/Aula_2.jpg',
+      legenda: 'Momentos de aprendizagem intensa e entreajuda'
+    },
+    {
+      url: '/img/Aula_3.jpg',
+      legenda: 'Trabalhos, desafios e conquistas partilhadas'
+    },
+    {
+      url: '/img/Aula_4.jpg',
+      legenda: 'Uma turma que fica para a vida'
+    }
   ];
 
   res.render('galeria', {
-    titulo: 'Relembrar os Velhos Tempos',
+    titulo: 'Galeria – Relembrar os Bons Momentos Académicos',
     fotos
   });
 });

@@ -7,22 +7,32 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>{{titulo}}</h1>
+    <h1>ENCONTRO DA TURMA PRODIGI - Turma 2025/2026</h1>
     <nav>
       <a href="/">Início</a>
+      <a href="/onde-quando">Onde & Quando</a>
+      <a href="/menus">Menus & Preços</a>
+      <a href="/inscricao">Inscrição</a>
+      <a href="/lista">Lista de Inscritos</a>
       <a href="/galeria">Galeria</a>
-      <a href="/contacto">Contacto</a>
+      <a href="/contacto">Contactos</a>
       <a href="/alojamento">Alojamento</a>
     </nav>
   </header>
 
   <main class="conteudo">
-    <h2>Relembrar os velhos tempos na Prodigi</h2>
+    <h2>{{titulo}}</h2>
+
+    <p>
+      Um pequeno regresso ao passado para recordar os momentos que marcaram
+      e marcam a nossa passagem pela Prodigi.
+    </p>
+
     <div class="galeria">
       {{#each fotos}}
-        <figure>
-          <img src="{{this.url}}" alt="{{this.legenda}}">
-          <figcaption>{{this.legenda}}</figcaption>
+        <figure class="galeria-item">
+          <img src="{{url}}" alt="{{legenda}}">
+          <figcaption>{{legenda}}</figcaption>
         </figure>
       {{/each}}
     </div>

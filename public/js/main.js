@@ -1,52 +1,55 @@
-// Contador regressivo com semanas
+// Contador regressivo (badges)
 function iniciarContador() {
   const alvoStr = window.DATA_EVENTO;
-  if (!alvoStr) {
-    console.warn('⚠ DATA_EVENTO não definido na página.');
-    return;
-  }
+  if (!alvoStr) return;
 
-  const elemento = document.getElementById('contador-texto');
-  if (!elemento) {
-    console.warn('⚠ Elemento #contador-texto não encontrado.');
-    return;
-  }
-
-  // Garantir data correta (ISO)
   const dataEvento = new Date(alvoStr);
+
+  const elSemanas = document.getElementById('c-semanas');
+  const elDias = document.getElementById('c-dias');
+  const elHoras = document.getElementById('c-horas');
+  const elMinutos = document.getElementById('c-minutos');
+  const elMsg = document.getElementById('contador-msg');
+
+  if (!elSemanas || !elDias || !elHoras || !elMinutos) return;
+
+  function pad2(n) {
+    return String(n).padStart(2, '0');
+  }
 
   function atualizar() {
     const agora = new Date();
-    const diff = dataEvento - agora;
+    let diff = dataEvento - agora;
 
     if (diff <= 0) {
-      elemento.textContent = 'É hoje! 🎉';
+      elSemanas.textContent = '0';
+      elDias.textContent = '0';
+      elHoras.textContent = '00';
+      elMinutos.textContent = '00';
+      if (elMsg) elMsg.textContent = 'É hoje! 🎉';
       clearInterval(timer);
       return;
     }
 
-    const totalSegundos = Math.floor(diff / 1000);
+    const totalMin = Math.floor(diff / 60000); // minutos
+    const totalHoras = Math.floor(totalMin / 60);
+    const totalDias = Math.floor(totalHoras / 24);
 
-    const totalDias = Math.floor(totalSegundos / 86400);
     const semanas = Math.floor(totalDias / 7);
     const dias = totalDias % 7;
+    const horas = totalHoras % 24;
+    const minutos = totalMin % 60;
 
-    const horas = Math.floor((totalSegundos % 86400) / 3600);
-    const minutos = Math.floor((totalSegundos % 3600) / 60);
-    const segundos = totalSegundos % 60;
+    elSemanas.textContent = String(semanas);
+    elDias.textContent = String(dias);
+    elHoras.textContent = pad2(horas);
+    elMinutos.textContent = pad2(minutos);
 
-    let texto = '';
-
-    if (semanas > 0) texto += `${semanas} semana(s), `;
-    texto += `${dias} dia(s), ${horas} hora(s), ${minutos} minuto(s) e ${segundos} segundo(s)`;
-
-    elemento.textContent = texto;
+    if (elMsg) elMsg.textContent = ''; // limpa mensagem
   }
 
   atualizar();
   const timer = setInterval(atualizar, 1000);
-
-  console.log('⏱ Contador iniciado para:', dataEvento.toISOString());
 }
 
 // ---------- Distritos -> Concelhos (via API) ----------
@@ -93,5 +96,8 @@ function ligarDistritoConcelho() {
 
 document.addEventListener('DOMContentLoaded', () => {
   iniciarContador();
-  carregarConcelhos().then(ligarDistritoConcelho);
+
+  carregarConcelhos()
+    .then(() => ligarDistritoConcelho())
+    .catch(err => console.error('Erro ao inicializar selects de concelhos:', err));
 });

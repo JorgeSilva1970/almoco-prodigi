@@ -2,40 +2,39 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1>ENCONTRO DA TURMA PRODIGI - Turma 2025/2026</h1>
-    <nav>
-      <a href="/">Início</a>
-      <a href="/onde-quando">Onde & Quando</a>
-      <a href="/menus">Menus & Preços</a>
-      <a href="/inscricao">Inscrição</a>
-      <a href="/lista">Lista de Inscritos</a>
-      <a href="/galeria">Galeria</a>
-      <a href="/contacto">Contactos</a>
-      <a href="/alojamento">Alojamento</a>
-    </nav>
-  </header>
 
-  <main class="conteudo">
-    <h2>{{titulo}}</h2>
+<header class="topbar">
+  <h1>ENCONTRO DA TURMA PRODIGI - Turma 2025/2026</h1>
+  <nav>
+    <a href="/">Início</a>
+    <a href="/onde-quando">Onde & Quando</a>
+    <a href="/menus">Menus & Preços</a>
+    <a href="/inscricao">Inscrição</a>
+    <a href="/lista">Lista de Inscritos</a>
+    <a href="/galeria">Galeria</a>
+    <a href="/contacto">Contactos</a>
+    <a href="/alojamento">Alojamento</a>
+  </nav>
+</header>
 
-    <p>
-      Um pequeno regresso ao passado para recordar os momentos que marcaram
-      e marcam a nossa passagem pela Prodigi.
-    </p>
+<main class="conteudo">
+  <h2>{{titulo}}</h2>
+  <p>Um pequeno regresso ao passado para recordar os momentos que marcaram a nossa passagem pela Prodigi.</p>
 
-    <div class="galeria">
-      {{#each fotos}}
-        <figure class="galeria-item">
-          <img src="{{url}}" alt="{{legenda}}">
-          <figcaption>{{legenda}}</figcaption>
-        </figure>
-      {{/each}}
-    </div>
-  </main>
+  <div class="galeria">
+    {{#each fotos}}
+      <figure class="galeria-item">
+        <img src="{{url}}" alt="{{alt}}">
+        <figcaption>{{legenda}}</figcaption>
+      </figure>
+    {{/each}}
+  </div>
+</main>
+
 </body>
 </html>

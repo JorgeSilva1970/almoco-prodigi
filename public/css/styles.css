@@ -91,7 +91,7 @@ img {
   display: inline-block;
   margin-top: 10px;
   padding: 10px 20px;
-  background: #6b7280; /* cinzento */
+  background: #6b7280;
   color: white;
   border-radius: 4px;
   text-decoration: none;
@@ -201,13 +201,8 @@ img {
   color: #111827;
 }
 
-.erro {
-  color: red;
-}
-
-.ok {
-  color: green;
-}
+.erro { color: red; }
+.ok { color: green; }
 
 /* Cartões dos menus */
 .menu-card {
@@ -220,7 +215,6 @@ img {
 
 /* --------------------------
    SECÇÃO DO EVENTO
-   (texto à esquerda, imagens à direita)
 --------------------------- */
 
 .evento-container {
@@ -246,13 +240,8 @@ img {
   margin-bottom: 20px;
 }
 
-.img-principal {
-  width: 80%;
-}
-
-.img-secundaria {
-  width: 60%;
-}
+.img-principal { width: 80%; }
+.img-secundaria { width: 60%; }
 
 /* --------------------------
    GALERIA
@@ -260,7 +249,7 @@ img {
 
 .galeria {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 20px;
   margin-top: 20px;
 }
@@ -274,18 +263,19 @@ img {
 }
 
 .galeria-item:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
 }
 
 .galeria-item img {
   width: 100%;
-  height: auto;
+  height: 190px;       /* altura fixa para ficar alinhado */
+  object-fit: cover;   /* corta sem distorcer */
   display: block;
 }
 
 .galeria-item figcaption {
-  padding: 10px;
-  font-size: 0.9rem;
+  padding: 12px;
+  font-size: 0.95rem;
   background: #f9fafb;
   text-align: center;
 }
@@ -302,161 +292,13 @@ img {
   border: 1px solid #e5e7eb;
 }
 
-/* --------------------------
-   RESPONSIVO (TELEMÓVEL / TABLET)
---------------------------- */
-
-@media (max-width: 768px) {
-
-  /* Topbar em coluna e menu mais compacto */
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .topbar h1 {
-    font-size: 1rem;
-  }
-
-  .topbar nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .topbar nav a {
-    margin-left: 0;
-    padding: 4px 6px;
-    font-size: 0.9rem;
-  }
-
-  /* HERO: texto e imagem em coluna */
-  .hero {
-    flex-direction: column;
-    gap: 20px;
-    padding: 15px;
-  }
-
-  .hero-imagem img {
-    max-width: 100%;
-  }
-
-  /* Evento: texto em cima, imagens em baixo */
-  .evento-container {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    margin: 20px auto;
-    gap: 20px;
-    text-align: left;
-  }
-
-  .evento-texto,
-  .evento-imagens {
-    width: 100%;
-  }
-
-  .evento-imagens {
-    text-align: left;
-  }
-
-  .evento-imagens img {
-    max-width: 100%;
-  }
-
-  /* Botão de inscrição ocupa a largura toda */
-  .btn-inscricao {
-    width: 100%;
-    text-align: center;
-    box-sizing: border-box;
-  }
-
-  /* Caixas de conteúdo mais apertadas */
-  .conteudo {
-    margin: 10px;
-    padding: 15px;
-  }
-
-  /* Galeria centrada */
-  .galeria {
-    justify-content: center;
-  }
-
-  /* Tabelas roláveis se não couberem */
-  .tabela-inscritos {
-    display: block;
-    overflow-x: auto;
-  }
+.organizador {
+  margin-bottom: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-/* --------------------------
-   ONDE & QUANDO (layout)
---------------------------- */
-
-.onde-quando-layout {
-  display: flex;
-  gap: 40px;
-  align-items: flex-start;
-}
-
-.onde-quando-texto {
-  flex: 1;
-}
-
-.onde-quando-imagem {
-  flex: 1;
-  text-align: right;
-}
-
-.onde-quando-imagem img {
-  max-width: 100%;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-/* Versão mobile: texto em cima, foto em baixo */
-@media (max-width: 768px) {
-  .onde-quando-layout {
-    flex-direction: column;
-  }
-
-  .onde-quando-imagem {
-    text-align: left;
-    margin-top: 20px;
-  }
-}
-
-/* --------------------------
-   ESTILOS PARA IMPRESSÃO
---------------------------- */
-
-@media print {
-  /* Esconder a barra de navegação e botões quando se imprime */
-  .topbar nav,
-  .btn-principal,
-  .btn-secundario {
-    display: none !important;
-  }
-
-  body {
-    background: rgb(95, 238, 39);
-  }
-
-  .conteudo {
-    margin: 0;
-    box-shadow: none;
-    border-radius: 0;
-  }
-}
-
-  .organizador {
-    margin-bottom: 20px;
-    padding: 10px 0;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .tabela-contactos {
+.tabela-contactos {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
@@ -480,4 +322,130 @@ img {
 
 .tabela-contactos tr:hover {
   background-color: #f1f1f1;
+}
+
+/* --------------------------
+   ONDE & QUANDO (layout)
+--------------------------- */
+
+.onde-quando-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.onde-quando-texto { flex: 1; }
+.onde-quando-imagem { flex: 1; text-align: right; }
+
+.onde-quando-imagem img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------------
+   RESPONSIVO
+--------------------------- */
+
+@media (max-width: 768px) {
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .topbar h1 {
+    font-size: 1rem;
+  }
+
+  .topbar nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .topbar nav a {
+    margin-left: 0;
+    padding: 4px 6px;
+    font-size: 0.9rem;
+  }
+
+  .hero {
+    flex-direction: column;
+    gap: 20px;
+    padding: 15px;
+  }
+
+  .hero-imagem img {
+    max-width: 100%;
+  }
+
+  .evento-container {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin: 20px auto;
+    gap: 20px;
+    text-align: left;
+  }
+
+  .evento-texto,
+  .evento-imagens {
+    width: 100%;
+  }
+
+  .evento-imagens {
+    text-align: left;
+  }
+
+  .evento-imagens img {
+    max-width: 100%;
+  }
+
+  .btn-inscricao {
+    width: 100%;
+    text-align: center;
+  }
+
+  .conteudo {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .tabela-inscritos {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .onde-quando-layout {
+    flex-direction: column;
+  }
+
+  .onde-quando-imagem {
+    text-align: left;
+    margin-top: 20px;
+  }
+}
+
+/* --------------------------
+   ESTILOS PARA IMPRESSÃO
+--------------------------- */
+
+@media print {
+  .topbar nav,
+  .btn-principal,
+  .btn-secundario {
+    display: none !important;
+  }
+
+  body {
+    background: rgb(95, 238, 39);
+  }
+
+  .conteudo {
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
 }

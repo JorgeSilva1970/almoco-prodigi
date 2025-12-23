@@ -188,19 +188,23 @@ app.get('/api/concelhos', (req, res) => {
 app.get('/galeria', (req, res) => {
   const fotos = [
     {
-      url: '/img/Aula_1.jpg',
-      legenda: 'Primeiros dias na Prodigi – nervos, expectativas e muitos sonhos'
+      url: '/img/Aula_1.png',
+      alt: 'Primeiros dias na Prodigi',
+      legenda: 'Primeiros dias na Prodigi — nervos, expectativas e muitos sonhos'
     },
     {
-      url: '/img/Aula_2.jpg',
+      url: '/img/Aula_2.png',
+      alt: 'Aprendizagem e entreajuda',
       legenda: 'Momentos de aprendizagem intensa e entreajuda'
     },
     {
-      url: '/img/Aula_3.jpg',
+      url: '/img/Aula_3.png',
+      alt: 'Trabalhos e conquistas',
       legenda: 'Trabalhos, desafios e conquistas partilhadas'
     },
     {
-      url: '/img/Aula_4.jpg',
+      url: '/img/Aula_4.png',
+      alt: 'Turma para a vida',
       legenda: 'Uma turma que fica para a vida'
     }
   ];

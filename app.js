@@ -75,10 +75,16 @@ app.use(express.static('public'));
 
 // ----------------------------------------------------
 // "BASE DE DADOS" EM FICHEIROS JSON
+//   - Local: ./data/inscricoes.json
+//   - Produção (Render): /var/data/inscricoes.json (Persistent Disk)
 // ----------------------------------------------------
 
-const DATA_DIR = process.env.DATA_DIR || process.cwd(); 
+const isRender = !!process.env.RENDER; // Render define esta env var
+const DEFAULT_DATA_DIR = isRender ? '/var/data' : path.join(process.cwd(), 'data');
+
+const DATA_DIR = process.env.DATA_DIR || DEFAULT_DATA_DIR;
 const DB_FILE = path.join(DATA_DIR, 'inscricoes.json');
+
 const DIST_CONC_FILE = './Lista_distrito_concelho.json';
 
 let inscricoes = [];
@@ -107,9 +113,10 @@ async function carregarDistritosConcelhos() {
 // Carrega inscrições do ficheiro JSON
 async function carregarInscricoes() {
   try {
-    const data = await fs.readFile(DB_FILE, 'utf-8');
+    // garante que a pasta existe
+    await fs.mkdir(path.dirname(DB_FILE), { recursive: true });
 
-    // Se o ficheiro estiver vazio, assume []
+    const data = await fs.readFile(DB_FILE, 'utf-8');
     const texto = data.trim() === '' ? '[]' : data;
 
     inscricoes = JSON.parse(texto);
@@ -117,8 +124,8 @@ async function carregarInscricoes() {
     const maxId = inscricoes.reduce((max, i) => (i.id > max ? i.id : max), 0);
     proximoId = maxId + 1;
 
+    console.log(`✅ Inscrições carregadas (${inscricoes.length}) de: ${DB_FILE}`);
   } catch (err) {
-    // ✅ Só inicializa a BD se o ficheiro não existir
     if (err.code === 'ENOENT') {
       console.log('📁 BD não existe, a criar nova:', DB_FILE);
       inscricoes = [];
@@ -127,9 +134,8 @@ async function carregarInscricoes() {
       return;
     }
 
-    // ❌ Não apaga o ficheiro em erros de parse/leitura
-    console.error('❌ Erro a carregar inscrições. NÃO vou apagar dados:', err);
-    throw err; // força a ver o erro e corrigir
+    console.error('❌ Erro a carregar inscrições (não vou apagar dados):', err);
+    throw err;
   }
 }
 
@@ -138,6 +144,7 @@ async function guardarInscricoes() {
   // garante que a pasta existe (local e produção)
   await fs.mkdir(path.dirname(DB_FILE), { recursive: true });
 
+  // escrita atómica: tmp -> rename
   const tmp = `${DB_FILE}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(inscricoes, null, 2), 'utf-8');
   await fs.rename(tmp, DB_FILE);

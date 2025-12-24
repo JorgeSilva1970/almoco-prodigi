@@ -75,9 +75,9 @@ img {
 
 .contador-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(90px, 1fr));
+  grid-template-columns: repeat(4, minmax(100px, 1fr));
   gap: 12px;
-  margin-top: 10px;
+  margin-top: 12px;
   max-width: 520px;
 }
 
@@ -93,8 +93,8 @@ img {
 .contador-valor {
   font-weight: 900;
   color: #166534;
-  font-size: clamp(1.2rem, 1.6vw, 1.55rem);
-  line-height: 1.05;
+  font-size: clamp(1.2rem, 1.6vw, 1.6rem);
+  line-height: 1.1;
 }
 
 .contador-label {
@@ -104,43 +104,39 @@ img {
   opacity: 0.95;
 }
 
+/* Mensagem extra (ex: “É hoje!”) */
 .contador-msg {
-  margin-top: 8px;
-  font-weight: bold;
+  margin-top: 10px;
+  font-weight: 800;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
   color: #166534;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  border-radius: 10px;
+  padding: 10px 12px;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
-/* ✅ MOBILE: fica 2x2 (muito legível) */
+/* --------------------------
+   MOBILE (2x2)
+--------------------------- */
+
 @media (max-width: 768px) {
   .contador-grid {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
     max-width: 100%;
   }
 
-  .contador-badge {
-    padding: 12px;
+  .contador-valor {
+    font-size: 1.4rem;
   }
 
   .contador-label {
     font-size: 0.95rem;
   }
-}
-
-  /* tamanho responsivo: não fica gigante nem minúsculo */
-  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
-  font-weight: 800;
-  line-height: 1.25;
-
-  color: #166534;
-  background: #dcfce7;               /* verde suave */
-  border: 1px solid #86efac;         /* borda suave */
-  border-radius: 10px;
-  padding: 10px 12px;
-
-  max-width: 100%;
-  white-space: normal;
-  overflow-wrap: anywhere;            /* evita “segundos” rebentar feio */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
 /* --------------------------
@@ -151,7 +147,7 @@ img {
   display: inline-block;
   margin-top: 10px;
   padding: 10px 20px;
-  background: #4df62b;
+  background: #41e965;
   color: rgb(12, 3, 3);
   border-radius: 4px;
   text-decoration: none;

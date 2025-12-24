@@ -135,7 +135,9 @@ async function carregarInscricoes() {
 
 // Guarda inscrições no ficheiro JSON
 async function guardarInscricoes() {
-  // ✅ escrita atómica: escreve num temp e depois renomeia (evita ficheiro corrompido)
+  // garante que a pasta existe (local e produção)
+  await fs.mkdir(path.dirname(DB_FILE), { recursive: true });
+
   const tmp = `${DB_FILE}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(inscricoes, null, 2), 'utf-8');
   await fs.rename(tmp, DB_FILE);

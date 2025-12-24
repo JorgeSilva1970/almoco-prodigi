@@ -2,21 +2,126 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{titulo}}</title>
   <link rel="stylesheet" href="/css/styles.css">
+
+  <style>
+    /* --------------------------
+       ADMIN (extra) - impressão
+    --------------------------- */
+
+    .admin-acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 18px;
+      align-items: center;
+    }
+
+    .btn-imprimir {
+      display: inline-block;
+      padding: 10px 16px;
+      background: #111827;
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-imprimir:hover {
+      opacity: 0.9;
+    }
+
+    .resumo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .resumo-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .resumo-card h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .resumo-total {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .resumo-lista {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.4;
+    }
+
+    .resumo-lista li {
+      margin: 3px 0;
+    }
+
+    /* tabela mais confortável no admin */
+    .tabela-inscritos td, .tabela-inscritos th {
+      vertical-align: top;
+    }
+
+    /* --------------------------
+       PRINT: imprime só o relatório
+    --------------------------- */
+    @media print {
+      .topbar, .secao-contacto, .admin-acoes, .nao-imprimir {
+        display: none !important;
+      }
+
+      body {
+        background: #fff !important;
+      }
+
+      .conteudo {
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+      }
+
+      .resumo-card {
+        break-inside: avoid;
+      }
+
+      table {
+        page-break-inside: auto;
+      }
+
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <header class="topbar">
     <h1>Painel de Administração - Almoço Prodigi</h1>
     <nav>
       <a href="/">Ver site</a>
+      <a href="/admin/export-restaurante">CSV Restaurante</a>
       <a href="/admin/export-csv">Exportar CSV</a>
       <a href="/admin/logout">Sair</a>
     </nav>
   </header>
 
   <main class="conteudo">
-    <h2>Inscrições</h2>
+    <h2>Relatório para o Restaurante</h2>
 
     {{#if erro}}
       <p class="erro">{{erro}}</p>
@@ -25,6 +130,79 @@
     {{#if msg}}
       <p class="ok">{{msg}}</p>
     {{/if}}
+
+    <div class="admin-acoes nao-imprimir">
+      <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir relatório</button>
+      <a class="btn-secundario" href="/admin/export-csv" style="margin-left:0;">⬇️ Exportar CSV (detalhado)</a>
+    </div>
+
+    {{!-- RESUMO (para restaurante) --}}
+    {{#if resumo}}
+      <p class="resumo-total">
+        Total de inscrições ativas: {{resumo.total}}
+      </p>
+
+      <div class="resumo-grid">
+        <section class="resumo-card">
+          <h4>Menus (contagem)</h4>
+          {{#if resumo.porMenu}}
+            <ul class="resumo-lista">
+              {{#each resumo.porMenu}}
+                <li><strong>{{@key}}:</strong> {{this}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>Sem dados.</p>
+          {{/if}}
+        </section>
+
+        <section class="resumo-card">
+          <h4>Prato de Peixe (contagem)</h4>
+          {{#if resumo.porPeixe}}
+            <ul class="resumo-lista">
+              {{#each resumo.porPeixe}}
+                <li><strong>{{@key}}:</strong> {{this}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>Sem dados.</p>
+          {{/if}}
+        </section>
+
+        <section class="resumo-card">
+          <h4>Prato de Carne (contagem)</h4>
+          {{#if resumo.porCarne}}
+            <ul class="resumo-lista">
+              {{#each resumo.porCarne}}
+                <li><strong>{{@key}}:</strong> {{this}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>Sem dados.</p>
+          {{/if}}
+        </section>
+
+        <section class="resumo-card">
+          <h4>Sobremesa (contagem)</h4>
+          {{#if resumo.porSobremesa}}
+            <ul class="resumo-lista">
+              {{#each resumo.porSobremesa}}
+                <li><strong>{{@key}}:</strong> {{this}}</li>
+              {{/each}}
+            </ul>
+          {{else}}
+            <p>Sem dados.</p>
+          {{/if}}
+        </section>
+      </div>
+    {{/if}}
+
+    <hr style="margin: 18px 0;">
+
+    <h2>Lista detalhada (apenas ativas)</h2>
+    <p style="margin-top:-8px; font-size:0.95rem;">
+      Esta tabela mostra apenas inscrições ativas (não canceladas).
+    </p>
 
     {{#if inscricoes.length}}
       <table class="tabela-inscritos">
@@ -40,7 +218,6 @@
             <th>Peixe</th>
             <th>Carne</th>
             <th>Sobremesa</th>
-            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
@@ -56,16 +233,15 @@
               <td>{{pratoPeixe}}</td>
               <td>{{pratoCarne}}</td>
               <td>{{sobremesa}}</td>
-              <td>{{#if cancelado}}Cancelado{{else}}Ativo{{/if}}</td>
             </tr>
           {{/each}}
         </tbody>
       </table>
     {{else}}
-      <p>Não há inscrições registadas.</p>
+      <p>Não há inscrições ativas registadas.</p>
     {{/if}}
 
-    <section class="secao-contacto" style="margin-top:30px;">
+    <section class="secao-contacto nao-imprimir" style="margin-top:30px;">
       <h3>Enviar recordatório para todos os inscritos ativos</h3>
       <form method="post" action="/admin/enviar-recordatorio">
         <label>
@@ -76,6 +252,7 @@
           Enviar recordatório
         </button>
       </form>
+
       <p style="margin-top:10px;font-size:0.9rem;">
         O recordatório é enviado apenas para inscrições ativas (não canceladas) e inclui o link
         pessoal para anular a presença.

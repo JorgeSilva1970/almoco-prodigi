@@ -514,9 +514,28 @@ app.post('/anular-por-email', async (req, res) => {
 
 // Painel admin
 app.get('/admin', requireAdmin, (req, res) => {
+  const ativos = inscricoes.filter(i => !i.cancelado);
+
+  // resumo por menu e pratos (para restaurante)
+  const resumo = {
+    total: ativos.length,
+    porMenu: {},
+    porPeixe: {},
+    porCarne: {},
+    porSobremesa: {}
+  };
+
+  for (const i of ativos) {
+    resumo.porMenu[i.menu] = (resumo.porMenu[i.menu] || 0) + 1;
+    resumo.porPeixe[i.pratoPeixe] = (resumo.porPeixe[i.pratoPeixe] || 0) + 1;
+    resumo.porCarne[i.pratoCarne] = (resumo.porCarne[i.pratoCarne] || 0) + 1;
+    resumo.porSobremesa[i.sobremesa] = (resumo.porSobremesa[i.sobremesa] || 0) + 1;
+  }
+
   res.render('admin', {
     titulo: 'Painel de Administração',
-    inscricoes
+    inscricoes: ativos,
+    resumo
   });
 });
 
@@ -561,6 +580,85 @@ app.get('/admin/export-csv', requireAdmin, (req, res) => {
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="inscricoes_prodigi.csv"');
+  res.send(csv);
+});
+
+// Exportar CSV "para restaurante" (Resumo + Lista detalhada das inscrições ativas)
+app.get('/admin/export-restaurante', requireAdmin, (req, res) => {
+  const ativos = inscricoes.filter(i => !i.cancelado);
+
+  // helper para contar valores
+  function contarPor(campo) {
+    const contagens = {};
+    for (const i of ativos) {
+      const val = (i[campo] ?? '').toString().trim() || '(vazio)';
+      contagens[val] = (contagens[val] || 0) + 1;
+    }
+    return contagens;
+  }
+
+  const porMenu = contarPor('menu');
+  const porPeixe = contarPor('pratoPeixe');
+  const porCarne = contarPor('pratoCarne');
+  const porSobremesa = contarPor('sobremesa');
+
+  // sanitiza para CSV com ; (evita partir colunas)
+  const s = (v) => `"${(v ?? '').toString().replaceAll('"', '""')}"`;
+
+  const linhas = [];
+
+  // --- RESUMO ---
+  linhas.push('RESUMO;;;;;;;');
+  linhas.push(`Total de inscrições ativas;${ativos.length};;;;;;`);
+  linhas.push(';;;;;;;');
+
+  linhas.push('Menus;Quantidade;;;;;;');
+  Object.entries(porMenu).forEach(([k, v]) => {
+    linhas.push(`${s(k)};${v};;;;;;`);
+  });
+  linhas.push(';;;;;;;');
+
+  linhas.push('Prato de Peixe;Quantidade;;;;;;');
+  Object.entries(porPeixe).forEach(([k, v]) => {
+    linhas.push(`${s(k)};${v};;;;;;`);
+  });
+  linhas.push(';;;;;;;');
+
+  linhas.push('Prato de Carne;Quantidade;;;;;;');
+  Object.entries(porCarne).forEach(([k, v]) => {
+    linhas.push(`${s(k)};${v};;;;;;`);
+  });
+  linhas.push(';;;;;;;');
+
+  linhas.push('Sobremesa;Quantidade;;;;;;');
+  Object.entries(porSobremesa).forEach(([k, v]) => {
+    linhas.push(`${s(k)};${v};;;;;;`);
+  });
+
+  linhas.push(''); // linha vazia
+  linhas.push('LISTA DETALHADA (ATIVAS);;;;;;;');
+  linhas.push('ID;Nome;Telefone;Email;Distrito;Concelho;Menu;Peixe;Carne;Sobremesa');
+
+  // --- LISTA DETALHADA ---
+  ativos.forEach(i => {
+    linhas.push([
+      i.id,
+      s(i.nome),
+      s(i.telefone),
+      s(i.email),
+      s(i.distrito),
+      s(i.concelho),
+      s(i.menu),
+      s(i.pratoPeixe),
+      s(i.pratoCarne),
+      s(i.sobremesa)
+    ].join(';'));
+  });
+
+  const csv = '\uFEFF' + linhas.join('\n'); // BOM UTF-8 para acentos
+
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="restaurante_prodigi.csv"');
   res.send(csv);
 });
 

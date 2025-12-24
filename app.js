@@ -9,6 +9,7 @@ import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import session from 'express-session';
 import { MailerSend, EmailParams, Sender, Recipient } from 'mailersend';
+import path from 'path';
 
 // ----------------------------------------------------
 // VARIÁVEIS DE AMBIENTE
@@ -76,7 +77,8 @@ app.use(express.static('public'));
 // "BASE DE DADOS" EM FICHEIROS JSON
 // ----------------------------------------------------
 
-const DB_FILE = './inscricoes.json';
+const DATA_DIR = process.env.DATA_DIR || process.cwd(); 
+const DB_FILE = path.join(DATA_DIR, 'inscricoes.json');
 const DIST_CONC_FILE = './Lista_distrito_concelho.json';
 
 let inscricoes = [];
@@ -106,21 +108,37 @@ async function carregarDistritosConcelhos() {
 async function carregarInscricoes() {
   try {
     const data = await fs.readFile(DB_FILE, 'utf-8');
-    inscricoes = JSON.parse(data);
 
-    const maxId = inscricoes.reduce((max, i) => i.id > max ? i.id : max, 0);
+    // Se o ficheiro estiver vazio, assume []
+    const texto = data.trim() === '' ? '[]' : data;
+
+    inscricoes = JSON.parse(texto);
+
+    const maxId = inscricoes.reduce((max, i) => (i.id > max ? i.id : max), 0);
     proximoId = maxId + 1;
+
   } catch (err) {
-    console.log('A iniciar BD de inscrições:', err.message);
-    inscricoes = [];
-    proximoId = 1;
-    await guardarInscricoes();
+    // ✅ Só inicializa a BD se o ficheiro não existir
+    if (err.code === 'ENOENT') {
+      console.log('📁 BD não existe, a criar nova:', DB_FILE);
+      inscricoes = [];
+      proximoId = 1;
+      await guardarInscricoes();
+      return;
+    }
+
+    // ❌ Não apaga o ficheiro em erros de parse/leitura
+    console.error('❌ Erro a carregar inscrições. NÃO vou apagar dados:', err);
+    throw err; // força a ver o erro e corrigir
   }
 }
 
 // Guarda inscrições no ficheiro JSON
 async function guardarInscricoes() {
-  await fs.writeFile(DB_FILE, JSON.stringify(inscricoes, null, 2), 'utf-8');
+  // ✅ escrita atómica: escreve num temp e depois renomeia (evita ficheiro corrompido)
+  const tmp = `${DB_FILE}.tmp`;
+  await fs.writeFile(tmp, JSON.stringify(inscricoes, null, 2), 'utf-8');
+  await fs.rename(tmp, DB_FILE);
 }
 
 // Data/hora do evento (para o contador regressivo)
